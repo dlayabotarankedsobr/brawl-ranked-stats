@@ -1,0 +1,51 @@
+name: Сбор статистики ранкеда
+
+on:
+  schedule:
+    - cron: "17 */3 * * *"   # каждые 3 часа
+  workflow_dispatch:          # кнопка «Run workflow» для ручного запуска
+
+permissions:
+  contents: write
+
+concurrency:
+  group: collect
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Загрузить прошлые данные (ветка state)
+        run: |
+          if git fetch --depth 1 origin state 2>/dev/null; then
+            git checkout FETCH_HEAD -- data || true
+          fi
+          mkdir -p data/daily
+
+      - name: Собрать игры
+        env:
+          BS_API_KEY: ${{ secrets.BS_API_KEY }}
+          RUN_SECONDS: "1500"
+          MIN_RANK: "16"
+        run: python collector/collect.py
+
+      - name: Посчитать статистику
+        run: python collector/build_stats.py
+
+      - name: Сохранить данные в ветку state
+        run: |
+          mkdir /tmp/state && cp -r data /tmp/state/ && cd /tmp/state
+          git init -q -b state
+          git config user.name "stats-bot"
+          git config user.email "stats-bot@users.noreply.github.com"
+          git add -A
+          git commit -q -m "Статистика $(date -u '+%Y-%m-%d %H:%M')"
+          git push -q -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" state
