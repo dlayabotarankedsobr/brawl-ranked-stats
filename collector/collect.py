@@ -64,7 +64,7 @@ class Api:
             except urllib.error.HTTPError as e:
                 if e.code == 404:
                     return None
-                if e.code == 403:
+                if e.code == 403 and self.calls == 0:
                     raise SystemExit("403: ключ не подходит. Проверь, что в ключе указан IP 45.79.218.79 "
                                      "и что секрет BS_API_KEY вставлен целиком.")
                 if e.code in (429, 500, 502, 503, 504):
@@ -72,7 +72,7 @@ class Api:
                     continue
                 self.errors += 1
                 return None
-            except (urllib.error.URLError, TimeoutError, json.JSONDecodeError):
+            except Exception:  # обрывы соединения, таймауты, битый ответ — пробуем ещё раз
                 time.sleep(1 + attempt)
         self.errors += 1
         return None
@@ -168,6 +168,23 @@ def add_battle(day_data, mode, map_, names, winner, pro=False):
 
 
 # ---------------- основной цикл ----------------
+def crawl(fetch, handle, queue, start, players):
+    with ThreadPoolExecutor(max_workers=WORKERS) as pool:
+        q = queue()
+        i = 0
+        while i < len(q) and time.time() - start < RUN_SECONDS:
+            batch = q[i:i + WORKERS * 4]
+            i += len(batch)
+            for tag, data in pool.map(fetch, batch):
+                try:
+                    handle(tag, data)
+                except Exception as e:  # один странный бой не должен ронять весь сбор
+                    print("Пропускаю ответ из-за ошибки:", repr(e))
+            if len(players) > len(q) and i >= len(q):
+                q = queue()
+                i = 0
+
+
 def main():
     if not KEY:
         raise SystemExit("Нет ключа BS_API_KEY")
@@ -259,17 +276,10 @@ def main():
 
     learn_ranks(random.sample(list(players), min(15, len(players))))
 
-    with ThreadPoolExecutor(max_workers=WORKERS) as pool:
-        q = queue()
-        i = 0
-        while i < len(q) and time.time() - start < RUN_SECONDS:
-            batch = q[i:i + WORKERS * 4]
-            i += len(batch)
-            for tag, data in pool.map(fetch, batch):
-                handle(tag, data)
-            if len(players) > len(q) and i >= len(q):
-                q = queue()
-                i = 0
+    try:
+        crawl(fetch, handle, queue, start, players)
+    except Exception as e:  # даже при сбое сохраняем то, что успели собрать
+        print("Сбор прерван ошибкой:", repr(e))
 
     # 4) Чистим очередь, чтобы файл не рос бесконечно: оставляем 60 000 самых свежих
     if len(players) > 60000:
