@@ -4,6 +4,10 @@ on:
   schedule:
     - cron: "17 */3 * * *"   # каждые 3 часа
   workflow_dispatch:          # кнопка «Run workflow» для ручного запуска
+    inputs:
+      run_seconds:
+        description: "Сколько секунд собирать игры"
+        default: "1500"
 
 permissions:
   contents: write
@@ -30,10 +34,15 @@ jobs:
           fi
           mkdir -p data/daily
 
+      - name: Обновить список бойцов
+        env:
+          BS_API_KEY: ${{ secrets.BS_API_KEY }}
+        run: python collector/brawlers.py || true
+
       - name: Собрать игры
         env:
           BS_API_KEY: ${{ secrets.BS_API_KEY }}
-          RUN_SECONDS: "1500"
+          RUN_SECONDS: ${{ inputs.run_seconds || '1500' }}
           MIN_RANK: "16"
         run: python collector/collect.py
 

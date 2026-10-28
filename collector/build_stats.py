@@ -48,6 +48,9 @@ def main():
             add(out["vs"].setdefault(mode, {}), d["vs"][mode])
         for mode in d["with"]:
             add(out["with"].setdefault(mode, {}), d["with"][mode])
+    bl = ROOT / "data" / "brawlers.json"
+    if bl.exists():  # полный список бойцов с классами — бот берёт его отсюда
+        out["brawler_list"] = json.loads(bl.read_text(encoding="utf-8"))
     for key in ("vs", "with"):
         for mode, pairs in out[key].items():
             out[key][mode] = {k: v for k, v in pairs.items() if v[0] >= MIN_PAIR_GAMES}
