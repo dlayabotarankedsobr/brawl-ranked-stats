@@ -40,6 +40,12 @@ PLAYERS_FILE = DATA / "players.json"      # очередь игроков: те�
 SEEN_FILE = DATA / "seen.json"            # id уже учтённых боёв: день -> [id]
 RANK_NAMES_FILE = DATA / "rank_names.json"
 PRO_TAGS_FILE = ROOT / "collector" / "pro_tags.txt"
+BUILDS_FILE = DATA / "builds.json"        # сборки: боец -> счётчики гаджетов/пассивок/снаряжения
+PROFILED_FILE = DATA / "profiled.json"    # когда последний раз смотрели профиль игрока
+PROFILE_SHARE = float(os.getenv("PROFILE_SHARE", "0.25"))  # доля запросов на профили
+REPROFILE_DAYS = 14
+BUILD_DECAY = 0.995   # старые данные о сборках понемногу «забываются» (полураспад ~2,5 недели)
+MIN_POWER = 9         # учитываем бойцов, у которых уже можно открыть пассивку
 
 SEED_COUNTRIES = ["global", "ru", "us", "br", "kr", "jp", "de", "fr", "es", "tr", "mx", "pl", "ua", "kz"]
 
@@ -116,6 +122,42 @@ def bump(d, k1, k2, win):
     cell[1] += 1 if win else 0
 
 
+# ---------------- сборки ----------------
+def add_profile(builds, profile):
+    """API не говорит, что игрок взял в бой, но говорит, что у него открыто.
+    Главный признак выбора: если из двух гаджетов (пассивок) открыт только один — его и выбрали."""
+    for b in profile.get("brawlers", []):
+        if (b.get("power") or 0) < MIN_POWER:
+            continue
+        B = builds.setdefault(b["name"], {"n": 0, "gadget_only": {}, "gadget_own": {}, "n_gadget_only": 0,
+                                          "sp_only": {}, "sp_own": {}, "n_sp_only": 0,
+                                          "gear": {}, "n_gear": 0, "hc": 0})
+        B["n"] += 1
+        for kind in ("gadget", "sp"):
+            items = b.get("gadgets" if kind == "gadget" else "starPowers") or []
+            for it in items:
+                B[f"{kind}_own"][it["name"]] = B[f"{kind}_own"].get(it["name"], 0) + 1
+            if len(items) == 1:
+                nm = items[0]["name"]
+                B[f"{kind}_only"][nm] = B[f"{kind}_only"].get(nm, 0) + 1
+                B[f"n_{kind}_only"] += 1
+        gears = b.get("gears") or []
+        if gears:
+            B["n_gear"] += 1
+            for g in gears:
+                B["gear"][g["name"]] = B["gear"].get(g["name"], 0) + 1
+        if b.get("hyperCharges"):
+            B["hc"] += 1
+
+
+def decay_builds(builds, k):
+    def walk(x):
+        if isinstance(x, dict):
+            return {key: walk(v) for key, v in x.items()}
+        return round(x * k, 3) if isinstance(x, (int, float)) else x
+    return walk(builds)
+
+
 # ---------------- разбор боя ----------------
 def battle_id(item, tags):
     raw = item["battleTime"] + "|" + "|".join(sorted(tags))
@@ -168,18 +210,29 @@ def add_battle(day_data, mode, map_, names, winner, pro=False):
 
 
 # ---------------- основной цикл ----------------
-def crawl(fetch, handle, queue, start, players):
+def crawl(fetch, handle, queue, start, players, fetch_profile=None, handle_profile=None, profile_q=None):
     with ThreadPoolExecutor(max_workers=WORKERS) as pool:
         q = queue()
         i = 0
+        logs = profs = 0
         while i < len(q) and time.time() - start < RUN_SECONDS:
             batch = q[i:i + WORKERS * 4]
             i += len(batch)
+            logs += len(batch)
             for tag, data in pool.map(fetch, batch):
                 try:
                     handle(tag, data)
                 except Exception as e:  # один странный бой не должен ронять весь сбор
                     print("Пропускаю ответ из-за ошибки:", repr(e))
+            # профили для сборок — примерно PROFILE_SHARE от всех запросов
+            if profile_q and profs < PROFILE_SHARE / (1 - PROFILE_SHARE) * logs:
+                pb = [profile_q.pop() for _ in range(min(len(profile_q), WORKERS * 2))]
+                profs += len(pb)
+                for tag, data in pool.map(fetch_profile, pb):
+                    try:
+                        handle_profile(tag, data)
+                    except Exception as e:
+                        print("Пропускаю профиль из-за ошибки:", repr(e))
             if len(players) > len(q) and i >= len(q):
                 q = queue()
                 i = 0
@@ -199,6 +252,12 @@ def main():
     seen = {d: ids for d, ids in seen.items() if d >= cutoff}
     seen_set = {i for ids in seen.values() for i in ids}
     days: dict[str, dict] = {}
+    builds = decay_builds(load_json(BUILDS_FILE, {}), BUILD_DECAY)
+    profiled = load_json(PROFILED_FILE, {})                # tag -> день последнего просмотра профиля
+    re_cut = (now - timedelta(days=REPROFILE_DAYS)).strftime("%Y-%m-%d")
+    profiled = {t: d for t, d in profiled.items() if d >= re_cut}
+    profile_q: list[str] = []
+    today = now.strftime("%Y-%m-%d")
 
     pro_tags = set()
     if PRO_TAGS_FILE.exists():
@@ -221,7 +280,7 @@ def main():
         order = sorted(players, key=lambda t: (t not in pro_tags, players[t]))
         return order
 
-    stats = {"ranked": 0, "pro": 0, "low_rank": 0, "dup": 0, "players": 0}
+    stats = {"ranked": 0, "pro": 0, "low_rank": 0, "dup": 0, "players": 0, "profiles": 0}
     rank_hist: dict[int, int] = {}
 
     def fetch(tag):
@@ -264,8 +323,26 @@ def main():
             if day not in days:
                 days[day] = load_json(DAILY / f"{day}.json", None) or new_day()
             add_battle(days[day], mode, map_, names, winner, pro=pro_game)
+            for t in tags:  # игроков из сильных игр — в очередь на просмотр сборок
+                if t not in profiled:
+                    profiled[t] = "queued"
+                    profile_q.append(t)
             stats["ranked"] += 1
             stats["pro"] += 1 if pro_game else 0
+
+    def fetch_profile(tag):
+        return tag, api.get(f"/players/{tag_path(tag)}")
+
+    def handle_profile(tag, p):
+        profiled[tag] = today
+        if not p:
+            return
+        if p.get("rankedRank") is not None and p.get("rankedRankName"):
+            rank_names[str(p["rankedRank"])] = p["rankedRankName"]
+        if (p.get("rankedRank") or MIN_RANK) < MIN_RANK:
+            return
+        add_profile(builds, p)
+        stats["profiles"] += 1
 
     # 3) Иногда смотрим профили — узнаём, какие номера рангов соответствуют названиям
     def learn_ranks(sample):
@@ -277,7 +354,7 @@ def main():
     learn_ranks(random.sample(list(players), min(15, len(players))))
 
     try:
-        crawl(fetch, handle, queue, start, players)
+        crawl(fetch, handle, queue, start, players, fetch_profile, handle_profile, profile_q)
     except Exception as e:  # даже при сбое сохраняем то, что успели собрать
         print("Сбор прерван ошибкой:", repr(e))
 
@@ -296,12 +373,15 @@ def main():
     save_json(PLAYERS_FILE, players)
     save_json(SEEN_FILE, seen)
     save_json(RANK_NAMES_FILE, rank_names, compact=False)
+    save_json(BUILDS_FILE, builds)
+    save_json(PROFILED_FILE, {t: d for t, d in profiled.items() if d != "queued"})
 
     print(f"Запросов: {api.calls}, ошибок: {api.errors}, игроков проверено: {stats['players']}")
     print(f"Новых игр учтено: {stats['ranked']} (с про-игроками: {stats['pro']}), "
           f"ниже ранга {MIN_RANK}: {stats['low_rank']}, повторов: {stats['dup']}")
     print("Средний ранг в найденных играх:", dict(sorted(rank_hist.items())))
     print("Названия рангов:", rank_names)
+    print(f"Профилей для сборок: {stats['profiles']}, бойцов со сборками: {len(builds)}")
 
 
 if __name__ == "__main__":

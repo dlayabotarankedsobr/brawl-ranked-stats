@@ -48,6 +48,9 @@ def main():
             add(out["vs"].setdefault(mode, {}), d["vs"][mode])
         for mode in d["with"]:
             add(out["with"].setdefault(mode, {}), d["with"][mode])
+    bf = ROOT / "data" / "builds.json"
+    if bf.exists():  # сборки (гаджеты, пассивки, снаряжение) игроков Легенды+
+        out["builds"] = json.loads(bf.read_text(encoding="utf-8"))
     bl = ROOT / "data" / "brawlers.json"
     if bl.exists():  # полный список бойцов с классами — бот берёт его отсюда
         out["brawler_list"] = json.loads(bl.read_text(encoding="utf-8"))
