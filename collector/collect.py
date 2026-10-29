@@ -41,7 +41,8 @@ SEEN_FILE = DATA / "seen.json"            # id уже учтённых боёв:
 RANK_NAMES_FILE = DATA / "rank_names.json"
 PRO_TAGS_FILE = ROOT / "collector" / "pro_tags.txt"
 BUILDS_FILE = DATA / "builds.json"        # сборки: боец -> счётчики гаджетов/пассивок/снаряжения
-PROFILED_FILE = DATA / "profiled.json"    # когда последний раз смотрели профиль игрока
+PROFILED_FILE = DATA / "profiled.json"
+SAMPLE_FILE = DATA / "profile_sample.json"   # образец профиля игрока из API    # когда последний раз смотрели профиль игрока
 PROFILE_SHARE = float(os.getenv("PROFILE_SHARE", "0.25"))  # доля запросов на профили
 REPROFILE_DAYS = 3    # профиль перечитываем не чаще раза в 3 дня
 BUILD_DECAY = 0.995   # старые данные о сборках понемногу «забываются» (полураспад ~2,5 недели)
@@ -374,6 +375,9 @@ def main():
             return
         add_profile(builds, p)
         stats["profiles"] += 1
+        if not SAMPLE_FILE.exists() or stats["profiles"] == 1:  # образец профиля: какие поля отдаёт API
+            maxed = sorted(p.get("brawlers", []), key=lambda b: -len(json.dumps(b)))[:3]
+            save_json(SAMPLE_FILE, {"keys": sorted(p.keys()), "brawlers": maxed}, compact=False)
         own = {b["name"]: b for b in p.get("brawlers", [])}
         for bn, mode, map_, win, day in pending.pop(tag, []):
             b = own.get(bn)
