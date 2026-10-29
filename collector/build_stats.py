@@ -46,6 +46,11 @@ def main():
             add(out["brawlers"].setdefault(map_, {}), d["brawlers"].get(map_, {}))
             add(out["pro"].setdefault(map_, {}), d.get("pro_brawlers", {}).get(map_, {}))
             add(out["mode_brawlers"].setdefault(mode, {}), d["brawlers"].get(map_, {}))
+        for scope, brs in d.get("loadouts", {}).items():  # точные сборки по режимам и картам
+            dst = out.setdefault("loadouts", {}).setdefault(scope, {})
+            for bn, kinds in brs.items():
+                for kind, vals in kinds.items():
+                    add(dst.setdefault(bn, {}).setdefault(kind, {}), vals)
         for mode in d["vs"]:
             add(out["vs"].setdefault(mode, {}), d["vs"][mode])
         for mode in d["with"]:

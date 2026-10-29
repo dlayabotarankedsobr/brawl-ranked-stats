@@ -43,7 +43,7 @@ PRO_TAGS_FILE = ROOT / "collector" / "pro_tags.txt"
 BUILDS_FILE = DATA / "builds.json"        # сборки: боец -> счётчики гаджетов/пассивок/снаряжения
 PROFILED_FILE = DATA / "profiled.json"    # когда последний раз смотрели профиль игрока
 PROFILE_SHARE = float(os.getenv("PROFILE_SHARE", "0.25"))  # доля запросов на профили
-REPROFILE_DAYS = 14
+REPROFILE_DAYS = 3    # профиль перечитываем не чаще раза в 3 дня
 BUILD_DECAY = 0.995   # старые данные о сборках понемногу «забываются» (полураспад ~2,5 недели)
 MIN_POWER = 9         # учитываем бойцов, у которых уже можно открыть пассивку
 
@@ -154,6 +154,26 @@ def add_profile(builds, profile):
             B["hc"] += 1
 
 
+def certain_loadout(b):
+    """Что точно стояло у игрока на бойце: один открытый гаджет/пассивка — значит, он и стоял;
+    не больше двух видов снаряжения — значит, стояли именно они (слотов два)."""
+    g = b.get("gadgets") or []
+    sp = b.get("starPowers") or []
+    gears = sorted(x["name"] for x in (b.get("gears") or []))
+    return (g[0]["name"] if len(g) == 1 else None,
+            sp[0]["name"] if len(sp) == 1 else None,
+            "+".join(gears) if 1 <= len(gears) <= 2 else None)
+
+
+def add_loadout(day_data, scope, brawler, lo, win):
+    B = day_data.setdefault("loadouts", {}).setdefault(scope, {}).setdefault(brawler, {})
+    for kind, val in zip(("g", "sp", "gear"), lo):
+        if val:
+            cell = B.setdefault(kind, {}).setdefault(val, [0, 0])
+            cell[0] += 1
+            cell[1] += 1 if win else 0
+
+
 def decay_builds(builds, k):
     def walk(x):
         if isinstance(x, dict):
@@ -261,6 +281,7 @@ def main():
     re_cut = (now - timedelta(days=REPROFILE_DAYS)).strftime("%Y-%m-%d")
     profiled = {t: d for t, d in profiled.items() if d >= re_cut}
     profile_q: list[str] = []
+    pending: dict[str, list] = {}   # tag -> бои этого запуска: (боец, режим, карта, победа, день)
     today = now.strftime("%Y-%m-%d")
 
     pro_tags = set()
@@ -284,7 +305,7 @@ def main():
         order = sorted(players, key=lambda t: (t not in pro_tags, players[t]))
         return order
 
-    stats = {"ranked": 0, "pro": 0, "low_rank": 0, "dup": 0, "players": 0, "profiles": 0}
+    stats = {"ranked": 0, "pro": 0, "low_rank": 0, "dup": 0, "players": 0, "profiles": 0, "loadouts": 0}
     rank_hist: dict[int, int] = {}
 
     def fetch(tag):
@@ -330,6 +351,9 @@ def main():
             mid = (item.get("event") or {}).get("id")
             if mid:  # ID карты — для картинок в мини-приложении
                 days[day].setdefault("map_ids", {})[map_] = mid
+            for ti, team in enumerate(names):  # запоминаем, кто на ком играл — сборку узнаем из профиля
+                for pi, bn in enumerate(team):
+                    pending.setdefault(tags[ti * 3 + pi], []).append((bn, mode, map_, ti == winner, day))
             for t in tags:  # игроков из сильных игр — в очередь на просмотр сборок
                 if t not in profiled:
                     profiled[t] = "queued"
@@ -350,6 +374,19 @@ def main():
             return
         add_profile(builds, p)
         stats["profiles"] += 1
+        own = {b["name"]: b for b in p.get("brawlers", [])}
+        for bn, mode, map_, win, day in pending.pop(tag, []):
+            b = own.get(bn)
+            if not b:
+                continue
+            lo = certain_loadout(b)
+            if not any(lo):
+                continue
+            if day not in days:
+                days[day] = load_json(DAILY / f"{day}.json", None) or new_day()
+            add_loadout(days[day], mode, bn, lo, win)
+            add_loadout(days[day], "map:" + map_, bn, lo, win)
+            stats["loadouts"] += 1
 
     # 3) Иногда смотрим профили — узнаём, какие номера рангов соответствуют названиям
     def learn_ranks(sample):
@@ -388,7 +425,8 @@ def main():
           f"ниже ранга {MIN_RANK}: {stats['low_rank']}, повторов: {stats['dup']}")
     print("Средний ранг в найденных играх:", dict(sorted(rank_hist.items())))
     print("Названия рангов:", rank_names)
-    print(f"Профилей для сборок: {stats['profiles']}, бойцов со сборками: {len(builds)}")
+    print(f"Профилей для сборок: {stats['profiles']}, бойцов со сборками: {len(builds)}, "
+          f"боёв с точной сборкой: {stats['loadouts']}")
 
 
 if __name__ == "__main__":
