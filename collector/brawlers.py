@@ -25,7 +25,11 @@ def main():
     try:
         data = get(BASE + "/brawlers?limit=300", {"Authorization": f"Bearer {KEY}"})
         for b in data.get("items", []):
-            out.setdefault(b["name"], {})["id"] = b["id"]
+            e = out.setdefault(b["name"], {})
+            e["id"] = b["id"]
+            # гаджеты и пассивки по порядку ID — по ним приложение расшифровывает прокачку аккаунта
+            e["gadgets"] = sorted(([g["id"], g["name"]] for g in b.get("gadgets", [])))
+            e["starPowers"] = sorted(([g["id"], g["name"]] for g in b.get("starPowers", [])))
         print("Официальный API: бойцов", len(data.get("items", [])))
     except Exception as e:
         print("Официальный список не загрузился:", repr(e))
