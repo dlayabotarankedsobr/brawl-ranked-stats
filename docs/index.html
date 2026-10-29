@@ -102,6 +102,11 @@ img { display: block; }
 .rec .build span { display: inline-flex; align-items: center; gap: 4px; }
 .rec .build img { width: 20px; height: 20px; object-fit: contain; }
 .rec .build .where { font-weight: 700; font-size: 11px; opacity: .75; }
+.meta { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 4px 0 10px; }
+.mt { display: flex; align-items: center; gap: 8px; padding: 9px 10px; background: var(--panel); border: 3px solid var(--ink); border-radius: var(--r-md); box-shadow: 0 3px 0 var(--ink); min-width: 0; }
+.mt img { width: 36px; height: 36px; object-fit: contain; flex: none; }
+.mt span { display: block; font-size: 11.5px; color: var(--muted); font-weight: 700; }
+.mt b { display: block; font-weight: 900; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 8px; }
 .pgrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
 @media (min-width: 560px) { .pgrid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
@@ -241,6 +246,8 @@ const T = {
     g_vision_enemy: "кустов {p}% и у врага ближний бой — «Зрение» против засад",
     acc_title: "Мой аккаунт", acc_hint: "Введи тег — учту силу бойцов, гаджеты, пассивки и снаряжение. Бот пришлёт ссылку.",
     acc_find: "Найти", acc_forget: "Убрать", acc_open: "Профиль",
+    m_trophies: "Кубки", m_best: "Рекорд кубков", m_ranked: "Ранкед сейчас", m_best_ranked: "Лучший ранкед", m_level: "Уровень",
+    m_img: "Картинка профиля в чат",
     hc: "Гиперзаряд", bf: "Баффи", bf_g: "гаджет", bf_s: "пасс.", bf_h: "гипер",
     p_brawlers: "Бойцы {n}/{t}", p_max: "Сила 11: {n}", p_gadgets: "Гаджеты: {n}", p_sps: "Пассивки: {n}",
     p_hc: "Гиперзаряды: {n}", p_buffies: "Баффи: {n}", p_gears: "Снаряжение: {n}", acc_stats: "Бойцов: {n} · максимальной силы: {m}",
@@ -291,6 +298,8 @@ const T = {
     g_vision_enemy: "{p}% bushes and enemy close-range — Vision against ambushes",
     acc_title: "My account", acc_hint: "Enter your tag — I'll account for power levels, gadgets, star powers and gears. The bot will send a link.",
     acc_find: "Find", acc_forget: "Remove", acc_open: "Profile",
+    m_trophies: "Trophies", m_best: "Highest trophies", m_ranked: "Ranked now", m_best_ranked: "Best ranked", m_level: "Level",
+    m_img: "Profile image to chat",
     hc: "Hypercharge", bf: "Buffies", bf_g: "gadget", bf_s: "star", bf_h: "hyper",
     p_brawlers: "Brawlers {n}/{t}", p_max: "Power 11: {n}", p_gadgets: "Gadgets: {n}", p_sps: "Star Powers: {n}",
     p_hc: "Hypercharges: {n}", p_buffies: "Buffies: {n}", p_gears: "Gears: {n}", acc_stats: "Brawlers: {n} · max power: {m}",
@@ -322,7 +331,8 @@ const API2K = {};        // имя из API -> ключ
 const ALIAS = [];        // [строка, ключ] для поиска
 const S = { maps: {}, mapB: {}, proB: {}, modeB: {}, vs: {}, wt: {}, builds: {}, ids: {}, lo: {}, raw: null,
   terrain: {}, items: {}, gearById: {} };   // items: ключ бойца -> {gadgets:[[id,name]], starPowers:[...]}
-let ACC = null;          // прокачка аккаунта: { name, b: { ключ: {power, gadgets:Set, sps:Set, gears:Set, hc} } }
+let ACC = null;
+let ACC_META = {};       // кубки, рекорд, ранкед, уровень, тег          // прокачка аккаунта: { name, b: { ключ: {power, gadgets:Set, sps:Set, gears:Set, hc} } }
 let OWNED = new Set();   // «мои бойцы» (хранится в Telegram CloudStorage)
 let ONLY_MINE = true;
 
@@ -564,8 +574,12 @@ function cloudSet(key, v) { safeSet(key, v);
 async function loadAccount() {
   const h = new URLSearchParams(location.hash.slice(1));
   let code = h.get("acc"), name = h.get("name");
-  if (code) { cloudSet("acc", code); cloudSet("acc_name", name || ""); history.replaceState(null, "", location.pathname + location.search); }
-  else { code = await cloudGet("acc"); name = await cloudGet("acc_name"); }
+  if (code) { cloudSet("acc", code); cloudSet("acc_name", name || "");
+    const meta = {}; for (const k of ["tag", "tr", "htr", "rr", "elo", "hrr", "helo", "lvl"]) if (h.get(k)) meta[k] = h.get(k);
+    cloudSet("acc_meta", JSON.stringify(meta)); ACC_META = meta;
+    history.replaceState(null, "", location.pathname + location.search); }
+  else { code = await cloudGet("acc"); name = await cloudGet("acc_name");
+    try { ACC_META = JSON.parse((await cloudGet("acc_meta")) || "{}"); } catch (e) { ACC_META = {}; } }
   if (!code) return;
   try { ACC = await decodeAcc(code, name || ""); } catch (e) { ACC = null; console.error(e); }
   if (ACC) OWNED = new Set(Object.keys(ACC.b));   // аккаунт заменяет ручной список «Мои бойцы»
@@ -703,6 +717,22 @@ function profileCard(k) {
     <div class="pc-row bf"><b>${t("bf")}</b><span class="${bf.g ? "on" : ""}">${t("bf_g")}</span><span class="${bf.s ? "on" : ""}">${t("bf_s")}</span><span class="${bf.h ? "on" : ""}">${t("bf_h")}</span></div>
     ${gears ? `<div class="pc-row">${gears}</div>` : ""}</div>`;
 }
+function rankName(r) { const n = +r; if (!n) return "—";
+  const tiers = LANG === "ru" ? ["Бронза", "Серебро", "Золото", "Алмаз", "Мифик", "Легенда", "Мастер"] : ["Bronze", "Silver", "Gold", "Diamond", "Mythic", "Legendary", "Masters"];
+  if (n >= 22) return LANG === "ru" ? "Про" : "Pro";
+  return tiers[Math.floor((n - 1) / 3)] + " " + ["I", "II", "III"][(n - 1) % 3]; }
+function metaHtml() {
+  const m = ACC_META; if (!m || !Object.keys(m).length) return "";
+  const num = v => (+v).toLocaleString(LANG);
+  const tile = (label, value, icon) => `<div class="mt">${icon || ""}<div><span>${esc(label)}</span><b>${esc(value)}</b></div></div>`;
+  const rIcon = r => r ? `<img src="${CDN}/ranked/tiered/${58000000 + +r - 1}.png" alt="" onerror="this.remove()">` : "";
+  return `<div class="meta">
+    ${tile(t("m_trophies"), m.tr ? num(m.tr) : "—")}${tile(t("m_best"), m.htr ? num(m.htr) : "—")}
+    ${tile(t("m_ranked"), rankName(m.rr) + (m.elo ? " · " + m.elo : ""), rIcon(m.rr))}
+    ${tile(t("m_best_ranked"), rankName(m.hrr) + (m.helo ? " · " + m.helo : ""), rIcon(m.hrr))}
+    ${m.lvl ? tile(t("m_level"), m.lvl) : ""}
+    </div>${m.tag ? `<button class="big" style="background:var(--gold);color:var(--ink);margin:4px 0 12px" data-act="img">🖼 ${t("m_img")}</button>` : ""}`;
+}
 function renderProfile() {
   const keys = Object.keys(ACC.b);
   const q = st.q.trim().toLowerCase().replace(/ё/g, "е");
@@ -718,6 +748,7 @@ function renderProfile() {
   ];
   app.innerHTML = `<div class="topbar"><button class="iconbtn" data-act="back" aria-label="${t("back")}">‹</button>
     <div class="grow"><div class="title" style="margin:0">${esc(ACC.name || t("acc_title"))}</div></div>${langBtn()}</div>
+    ${metaHtml()}
     <div class="chips">${chips.map(c => `<span class="chip">${c}</span>`).join("")}</div>
     <div class="search"><input id="q" type="search" placeholder="${t("search")}" value="${esc(st.q)}" autocomplete="off"></div>
     <div class="pgrid" id="pgrid">${shown.map(profileCard).join("")}</div>`;
@@ -892,6 +923,8 @@ document.addEventListener("click", e => {
     const link = `https://t.me/${BOT_USERNAME}?start=tag_${tag}`;
     if (tg) { tg.openTelegramLink(link); try { tg.close(); } catch (e) {} } else location.href = link;
   }
+  else if (act === "img") { const link = `https://t.me/${BOT_USERNAME}?start=img_${ACC_META.tag}`;
+    if (tg) { tg.openTelegramLink(link); try { tg.close(); } catch (e) {} } else location.href = link; }
   else if (act === "profile") { st.stage = "profile"; st.q = ""; render(); window.scrollTo(0, 0); }
   else if (act === "accforget") { ACC = null; OWNED = new Set(); cloudSet("acc", ""); cloudSet("acc_name", ""); loadOwned().then(render); }
   else if (act === "my") { st.stage = "my"; st.q = ""; render(); window.scrollTo(0, 0); }
