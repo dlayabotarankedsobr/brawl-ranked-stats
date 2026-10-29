@@ -101,6 +101,12 @@ img { display: block; }
 .rec .build { display: flex; flex-wrap: wrap; gap: 4px 10px; margin-top: 6px; font-size: 12px; font-weight: 700; color: var(--text); }
 .rec .build span { display: inline-flex; align-items: center; gap: 4px; }
 .rec .build img { width: 20px; height: 20px; object-fit: contain; }
+.rec .build .where { font-weight: 700; font-size: 11px; opacity: .75; }
+.mine { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 12px 0 0; }
+.toggle { border: 2px solid var(--ink); border-radius: 999px; padding: 5px 12px; font-weight: 800; font-size: 12px; background: var(--panel); }
+.toggle.on { background: var(--gold); color: var(--ink); }
+.br.owned { box-shadow: inset 0 0 0 3px var(--gold); }
+.br.owned::after { content: "✓"; position: absolute; top: 2px; right: 4px; font-weight: 900; color: var(--gold); text-shadow: 0 1px 0 var(--ink); }
 .sect { font-weight: 800; font-size: 13px; color: var(--muted); margin: 6px 2px 6px; }
 
 /* сетка бойцов */
@@ -112,7 +118,7 @@ img { display: block; }
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(62px, 1fr)); gap: 7px; }
 .br { padding: 0; border-radius: var(--r-sm); border: 2px solid var(--ink); background: var(--panel); overflow: hidden; position: relative; }
 .br img, .br .ph { width: 100%; aspect-ratio: 1; object-fit: cover; background: #16225a; }
-.br .ph { display: grid; place-items: center; font-weight: 900; font-size: 20px; color: var(--muted); }
+.ph { display: grid; place-items: center; width: 100%; height: 100%; font-weight: 900; font-size: 20px; color: var(--muted); background: #16225a; }
 .br span { display: block; font-size: 10.5px; font-weight: 700; padding: 3px 2px 4px; text-align: center;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .br:disabled { opacity: .28; }
@@ -163,7 +169,9 @@ const T = {
     w_meta: "часто берут и выигрывают на этой карте", w_rare: "сильный, но редкий выбор",
     c_second_tank: "второй танк", c_all_close: "вся команда ближнего боя", c_open_close: "карта открытая, ближнему бою тяжело",
     c_need_long: "нужен дальний боец", c_no_long: "в команде не будет дальнего бойца", c_closed_long: "карта закрытая, дальнему тесно",
-    back: "Назад",
+    back: "Назад", for_map: "сборка под эту карту", for_mode: "сборка под этот режим",
+    my: "Мои бойцы", my_title: "Мои бойцы", my_hint: "Отметь бойцов, на которых играешь. Советы будут только из них.",
+    my_count: "Отмечено: {n}", only_mine: "Только мои", all: "Все бойцы", save: "Готово", select_all: "Выбрать всех", clear: "Снять всё",
   },
   en: {
     loading: "Loading stats…", load_err: "Couldn't load stats. Check your connection and reopen the app.",
@@ -181,12 +189,22 @@ const T = {
     w_meta: "often picked and winning on this map", w_rare: "strong but rare pick",
     c_second_tank: "second tank", c_all_close: "whole team is close-range", c_open_close: "open map, hard for close-range",
     c_need_long: "team needs long range", c_no_long: "team will have no long range", c_closed_long: "closed map, cramped for long range",
-    back: "Back",
+    back: "Back", for_map: "build for this map", for_mode: "build for this mode",
+    my: "My brawlers", my_title: "My brawlers", my_hint: "Mark the brawlers you play. Suggestions will use only them.",
+    my_count: "Selected: {n}", only_mine: "Only mine", all: "All brawlers", save: "Done", select_all: "Select all", clear: "Clear all",
   },
 };
 function params() { return new URLSearchParams(location.search); }
 let LANG = params().get("lang") || safeGet("lang") ||
   ((tg && tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.language_code || "ru").startsWith("ru") ? "ru" : "en");
+// «Мои бойцы»: Telegram CloudStorage (синхронизируется между устройствами), запасной вариант — localStorage
+function loadOwned() { return new Promise(res => {
+  const done = v => { OWNED = new Set((v || "").split(",").filter(Boolean)); res(); };
+  try { if (tg && tg.CloudStorage && tg.isVersionAtLeast && tg.isVersionAtLeast("6.9")) {
+    tg.CloudStorage.getItem("owned", (err, v) => done(err ? safeGet("owned") : (v || safeGet("owned")))); return; } } catch (e) {}
+  done(safeGet("owned")); }); }
+function saveOwned() { const v = [...OWNED].join(","); safeSet("owned", v);
+  try { if (tg && tg.CloudStorage && tg.isVersionAtLeast && tg.isVersionAtLeast("6.9")) tg.CloudStorage.setItem("owned", v); } catch (e) {} }
 function safeGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
 function safeSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
 function t(key, kw) { let s = (T[LANG] && T[LANG][key]) || T.ru[key] || key;
@@ -197,7 +215,9 @@ let D = null;            // app-data.json
 const B = {};            // ключ -> боец
 const API2K = {};        // имя из API -> ключ
 const ALIAS = [];        // [строка, ключ] для поиска
-const S = { maps: {}, mapB: {}, proB: {}, modeB: {}, vs: {}, wt: {}, builds: {}, ids: {}, raw: null };
+const S = { maps: {}, mapB: {}, proB: {}, modeB: {}, vs: {}, wt: {}, builds: {}, ids: {}, lo: {}, raw: null };
+let OWNED = new Set();   // «мои бойцы» (хранится в Telegram CloudStorage)
+let ONLY_MINE = true;
 
 function keyFromApi(api) {
   if (API2K[api]) return API2K[api];
@@ -231,6 +251,9 @@ async function load() {
   for (const m in raw.with) S.wt[modeKey(m)] = convPairs(raw.with[m]);
   for (const n in (raw.builds || {})) S.builds[keyFromApi(n)] = raw.builds[n];
   for (const n in (raw.brawler_list || {})) if (raw.brawler_list[n].id) S.ids[keyFromApi(n)] = raw.brawler_list[n].id;
+  for (const scope in (raw.loadouts || {})) {   // точные сборки: режим или "map:Карта"
+    const key = scope.startsWith("map:") ? scope : modeKey(scope); const dst = S.lo[key] || (S.lo[key] = {});
+    for (const n in raw.loadouts[scope]) dst[keyFromApi(n)] = raw.loadouts[scope][n]; }
 }
 
 // ================= названия и картинки =================
@@ -311,8 +334,9 @@ function scoreOf(c, d, bs, open) {
 function ranked(d, wantMeta) {
   if (!d.mode || !hasMap(d.map, d.mode)) return [];
   const taken = new Set([...d.bans, ...d.enemy, ...d.ally]); const open = openness(d.map, d.mode); const res = [];
-  for (const c in (S.modeB[d.mode] || {})) { if (taken.has(c)) continue;
-    const bs = brawlerScore(c, d.map, d.mode); if (!bs || bs.meta !== wantMeta) continue;
+  const mine = ONLY_MINE && OWNED.size ? OWNED : null;
+  for (const c in (S.modeB[d.mode] || {})) { if (taken.has(c) || (mine && !mine.has(c))) continue;
+    const bs = brawlerScore(c, d.map, d.mode); if (!bs || (!mine && bs.meta !== wantMeta) || (mine && wantMeta === false)) continue;
     const { score, why } = scoreOf(c, d, bs, open); res.push({ c, score, why }); }
   return res.sort((a, b) => b.score - a.score);
 }
@@ -324,6 +348,31 @@ function banCandidates(map, mode, exclude) {
   for (const c in (S.modeB[mode] || {})) { if (exclude.has(c)) continue; const bs = brawlerScore(c, map, mode);
     if (bs && bs.meta) out.push([(bs.adj - .5) * 100 + 2 * Math.log1p(bs.pick * 100) + bs.pro * 20, c]); }
   return out.sort((a, b) => b[0] - a[0]).slice(0, 5).map(x => x[1]);
+}
+const LO_MIN = 25, LO_K = 20, LO_SHARE = 0.15;
+// Лучший вариант из точных сборок: среди тех, что берут хотя бы в 15% боёв, — с лучшим сглаженным винрейтом.
+function bestOption(tab) {
+  const items = Object.entries(tab || {}); const total = items.reduce((s, [, v]) => s + v[0], 0);
+  if (total < LO_MIN) return null;
+  const ok = items.filter(([, v]) => v[0] / total >= LO_SHARE);
+  ok.sort((a, b) => (b[1][1] + LO_K * .5) / (b[1][0] + LO_K) - (a[1][1] + LO_K * .5) / (a[1][0] + LO_K));
+  return ok.length ? ok[0][0] : null;
+}
+// Сборка под конкретную карту (если данных хватает), иначе под режим, иначе — общая.
+function contextBuild(c, map, mode) {
+  const scopes = [["map", map ? S.lo["map:" + map] : null], ["mode", S.lo[mode]]];
+  const res = {}; let where = null;
+  for (const kind of ["g", "sp", "gear"]) {
+    for (const [lvl, sc] of scopes) {
+      if (!sc || !sc[c] || !sc[c][kind]) continue;
+      let tab = sc[c][kind];
+      if (kind === "gear") { const pairs = Object.fromEntries(Object.entries(tab).filter(([k]) => k.includes("+")));
+        if (Object.values(pairs).reduce((s, v) => s + v[0], 0) >= LO_MIN) tab = pairs; }
+      const best = bestOption(tab);
+      if (best) { res[kind] = best; where = where === "map" ? "map" : lvl; break; }
+    }
+  }
+  return Object.keys(res).length ? { ...res, where } : null;
 }
 function build(c) {
   const b = S.builds[c]; if (!b || (b.n || 0) < MIN_BUILD) return null; const res = { n: Math.round(b.n) };
@@ -337,6 +386,8 @@ function build(c) {
   }
   if (b.n_gear) res.gears = Object.entries(b.gear || {}).sort((x, y) => y[1] - x[1]).slice(0, 2).map(x => x[0]);
   res.ids = b.ids || {};
+  const cx = contextBuild(c, st.map, st.mode);   // поправка под карту/режим из точных сборок
+  if (cx) { if (cx.g) res.gadget = [cx.g]; if (cx.sp) res.sp = [cx.sp]; if (cx.gear) res.gears = cx.gear.split("+"); res.where = cx.where; }
   return res;
 }
 
@@ -366,10 +417,11 @@ const app = document.getElementById("app"), dock = document.getElementById("dock
 function langBtn() { return `<button class="iconbtn" data-act="lang" aria-label="Language">${LANG === "ru" ? "EN" : "RU"}</button>`; }
 
 function render() {
-  if (tg) { tg.BackButton[st.stage === "map" || st.stage === "first" ? "show" : "hide"](); }
+  if (tg) { tg.BackButton[["map", "first", "my"].includes(st.stage) ? "show" : "hide"](); }
   if (st.stage === "mode") return renderModes();
   if (st.stage === "map") return renderMaps();
   if (st.stage === "first") return renderFirst();
+  if (st.stage === "my") return renderMy();
   return renderDraft();
 }
 
@@ -380,7 +432,8 @@ function renderModes() {
   const upd = S.raw ? t("stats", { games: S.raw.games.toLocaleString(LANG), upd: S.raw.updated.slice(0, 10) }) : "";
   app.innerHTML = `<div class="topbar"><div class="grow"><div class="title">${t("choose_mode")}</div><div class="sub">${upd}</div></div>${langBtn()}</div>
     <div class="modes">${modes.map(m => `<button class="mode" data-mode="${m}">
-      <img src="${CDN}/game-modes/regular/${D.modes[m].id}.png" alt="" onerror="this.style.visibility='hidden'">${esc(modeName(m))}</button>`).join("")}</div>`;
+      <img src="${CDN}/game-modes/regular/${D.modes[m].id}.png" alt="" onerror="this.style.visibility='hidden'">${esc(modeName(m))}</button>`).join("")}</div>
+    <button class="big" style="background:var(--panel);margin-top:14px" data-act="my">⭐ ${t("my")}${OWNED.size ? ` · ${OWNED.size}` : ""}</button>`;
 }
 
 function renderMaps() {
@@ -403,6 +456,19 @@ function renderFirst() {
     ${mapLabel()}<div class="title" style="margin-top:18px">${t("who_first")}</div>
     <button class="big us" data-first="us">${t("we_first")}</button>
     <button class="big them" data-first="them">${t("they_first")}</button>`;
+}
+
+function renderMy() {
+  app.innerHTML = `<div class="topbar"><button class="iconbtn" data-act="back" aria-label="${t("back")}">‹</button>
+    <div class="grow"><div class="title" style="margin:0">${t("my_title")}</div></div>${langBtn()}</div>
+    <div class="sub" style="margin:2px 2px 6px">${t("my_hint")}</div>
+    <div class="mine"><span class="chip" id="mycount">${t("my_count", { n: OWNED.size })}</span>
+      <span><button class="toggle" data-act="myall">${t("select_all")}</button> <button class="toggle" data-act="mynone">${t("clear")}</button></span></div>
+    <div class="search"><input id="q" type="search" placeholder="${t("search")}" value="${esc(st.q)}" autocomplete="off"></div>
+    <div class="grid" id="grid">${gridHtml()}</div>`;
+  dock.hidden = false; dock.innerHTML = `<button class="primary" data-act="back">${t("save")}</button>`;
+  const q = document.getElementById("q");
+  q.addEventListener("input", e => { st.q = e.target.value; document.getElementById("grid").innerHTML = gridHtml(); });
 }
 
 function mapLabel() {
@@ -433,7 +499,8 @@ function buildHtml(c) {
   if (b.gadget) parts.push(`<span>${b.gadget.map(x => icon("gadgets", x) + esc(thing(x))).join(" / ")}</span>`);
   if (b.sp) parts.push(`<span>${b.sp.map(x => icon("star-powers", x) + esc(thing(x))).join(" / ")}</span>`);
   if (b.gears) parts.push(`<span>${b.gears.map(x => icon("gears", x) + esc(thing(x))).join(" + ")}</span>`);
-  return `<div class="build">${parts.join("")}</div>`;
+  const where = b.where ? `<span class="where">${t(b.where === "map" ? "for_map" : "for_mode")}</span>` : "";
+  return `<div class="build">${parts.join("")}${where}</div>`;
 }
 
 function recCard(r, top) {
@@ -473,7 +540,7 @@ function renderDraft() {
   app.innerHTML = `<div class="topbar"><img src="${CDN}/game-modes/regular/${D.modes[st.mode].id}.png" alt="" width="34" height="34" style="object-fit:contain" onerror="this.style.visibility='hidden'">
       <div class="grow"><div class="title" style="margin:0;font-size:19px">${esc(title)}</div>${mapLabel()}</div>${langBtn()}</div>
     <div class="board">${slots(st.bans, MAX_BANS, "bans", nextBan)}${slots(st.ally, 3, "us", nextUs)}${slots(st.enemy, 3, "them", nextThem)}</div>
-    ${phase}${hint}${recs}
+    ${phase}${hint}${OWNED.size && st.stage !== "done" ? `<div style="margin:-2px 2px 10px"><button class="toggle ${ONLY_MINE ? "on" : ""}" data-act="onlymine">⭐ ${ONLY_MINE ? t("only_mine") : t("all")}</button></div>` : ""}${recs}
     ${st.stage === "done" ? "" : `<div class="search"><input id="q" type="search" placeholder="${t("search")}" value="${esc(st.q)}" autocomplete="off"></div>
     <div class="grid" id="grid">${gridHtml()}</div>`}`;
   dock.hidden = false;
@@ -485,12 +552,13 @@ function renderDraft() {
 }
 
 function gridItem(k) {
-  const off = taken().has(k);
-  return `<button class="br" data-k="${k}" ${off ? "disabled" : ""}>${imgOr(brawlerImg(k), initials(k), bname(k))}<span>${esc(bname(k))}</span></button>`;
+  const off = st.stage !== "my" && taken().has(k);
+  const own = st.stage === "my" && OWNED.has(k);
+  return `<button class="br ${own ? "owned" : ""}" data-k="${k}" ${off ? "disabled" : ""} ${st.stage === "my" ? `aria-pressed="${own}"` : ""}>${imgOr(brawlerImg(k), initials(k), bname(k))}<span>${esc(bname(k))}</span></button>`;
 }
 function gridHtml() {
   // порядок: сначала популярные на этой карте, потом остальные по алфавиту
-  const tab = (st.map && S.mapB[st.map]) || S.modeB[st.mode] || {};
+  const tab = st.stage === "my" ? {} : ((st.map && S.mapB[st.map]) || S.modeB[st.mode] || {});
   let keys = Object.keys(B);
   const q = st.q.trim().toLowerCase().replace(/ё/g, "е");
   if (q) { const hit = new Set(ALIAS.filter(([a]) => a.includes(q)).map(([, k]) => k)); keys = keys.filter(k => hit.has(k)); }
@@ -504,6 +572,9 @@ document.addEventListener("click", e => {
   if (el.dataset.mode) { st.mode = el.dataset.mode; st.stage = "map"; haptic("light"); render(); window.scrollTo(0, 0); return; }
   if (el.dataset.map !== undefined) { st.map = el.dataset.map || null; st.stage = "first"; haptic("light"); render(); window.scrollTo(0, 0); return; }
   if (el.dataset.first) { snap(); st.first = el.dataset.first; st.stage = "bans"; haptic("light"); render(); return; }
+  if (el.dataset.k && st.stage === "my") { const k = el.dataset.k; OWNED.has(k) ? OWNED.delete(k) : OWNED.add(k);
+    el.classList.toggle("owned"); el.setAttribute("aria-pressed", OWNED.has(k));
+    document.getElementById("mycount").textContent = t("my_count", { n: OWNED.size }); saveOwned(); haptic("light"); return; }
   if (el.dataset.k) { tapBrawler(el.dataset.k); return; }
   const act = el.dataset.act;
   if (act === "undo") undo();
@@ -511,15 +582,19 @@ document.addEventListener("click", e => {
   else if (act === "bansdone") { snap(); st.stage = "picks"; haptic("light"); render(); }
   else if (act === "lang") { LANG = LANG === "ru" ? "en" : "ru"; safeSet("lang", LANG); document.documentElement.lang = LANG; render(); }
   else if (act === "back") goBack();
+  else if (act === "my") { st.stage = "my"; st.q = ""; render(); window.scrollTo(0, 0); }
+  else if (act === "myall") { Object.keys(B).forEach(k => OWNED.add(k)); saveOwned(); render(); }
+  else if (act === "mynone") { OWNED.clear(); saveOwned(); render(); }
+  else if (act === "onlymine") { ONLY_MINE = !ONLY_MINE; render(); }
 });
-function goBack() { if (st.stage === "first") st.stage = "map"; else if (st.stage === "map") st.stage = "mode"; render(); }
+function goBack() { if (st.stage === "first") st.stage = "map"; else if (st.stage === "map" || st.stage === "my") st.stage = "mode"; st.q = ""; render(); }
 
 (async function init() {
   document.documentElement.lang = LANG;
   if (tg) { tg.ready(); tg.expand(); try { tg.setHeaderColor("#1B2A6B"); tg.setBackgroundColor("#1B2A6B"); } catch (e) {}
     tg.BackButton.onClick(goBack); }
   app.innerHTML = `<div class="empty">${t("loading")}</div>`;
-  try { await load(); } catch (e) { app.innerHTML = `<div class="empty">${t("load_err")}</div>`; console.error(e); return; }
+  try { await Promise.all([load(), loadOwned()]); } catch (e) { app.innerHTML = `<div class="empty">${t("load_err")}</div>`; console.error(e); return; }
   render();
 })();
 </script>
