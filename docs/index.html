@@ -102,6 +102,12 @@ img { display: block; }
 .rec .build span { display: inline-flex; align-items: center; gap: 4px; }
 .rec .build img { width: 20px; height: 20px; object-fit: contain; }
 .rec .build .where { font-weight: 700; font-size: 11px; opacity: .75; }
+.miss { color: var(--red); text-decoration: none; font-weight: 900; }
+.acc { background: var(--panel); border: 3px solid var(--ink); border-radius: var(--r-lg); padding: 12px; margin-top: 14px; box-shadow: 0 4px 0 var(--ink); }
+.acc .row2 { display: flex; gap: 8px; margin-top: 8px; }
+.acc input { flex: 1; min-width: 0; padding: 10px 12px; border-radius: var(--r-md); border: 3px solid var(--ink); font: inherit; font-weight: 700; text-transform: uppercase; }
+.acc button { border: 2px solid var(--ink); border-radius: var(--r-md); padding: 0 14px; font-weight: 800; background: var(--gold); color: var(--ink); box-shadow: 0 3px 0 var(--ink); }
+.acc button.ghost { background: var(--panel-hi); color: var(--text); }
 .minis { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
 .mini { display: inline-flex; flex-direction: column; align-items: center; width: 64px; font-size: 11px; text-align: center; }
 .mini img, .mini .ph { width: 52px; height: 52px; border-radius: var(--r-sm); border: 2px solid var(--ink); object-fit: cover; font-size: 16px; }
@@ -160,6 +166,7 @@ img { display: block; }
 const STATS_URL = new URLSearchParams(location.search).get("stats")
   || "https://raw.githubusercontent.com/dlayabotarankedsobr/brawl-ranked-stats/state/data/stats.json";
 const CDN = "https://cdn.brawlify.com";
+const BOT_USERNAME = "brawl_draft_helper_bot";
 const K_SHRINK = 100, META_MIN_GAMES = 60, META_MIN_PICK = 0.03, MIN_PAIR_GAMES = 40,
       OPEN_MAP = 0.30, CLOSED_MAP = 0.12, MIN_BRAWLER_MAP_GAMES = 30, MIN_MODE_GAMES = 30,
       MIN_MAP_GAMES = 150, Z = 1.64, SPLIT = 0.6, MIN_BUILD = 20, MAX_BANS = 6;
@@ -206,6 +213,14 @@ const T = {
     map_open_tip: "Карта открытая: побеждает тот, кто бьёт дальше. Не стойте на линии огня снайперов.",
     map_closed_tip: "Карта закрытая: контролируйте кусты, проверяйте их выстрелом перед входом.",
     map_mid_tip: "Карта смешанная: играйте от укрытий и не разделяйтесь далеко.",
+    g_speed: "кустов {p}% — «Скорость» для сближения через кусты",
+    g_vision: "кустов {p}% — «Зрение», чтобы враг не прятался в кустах",
+    g_vision_enemy: "кустов {p}% и у врага ближний бой — «Зрение» против засад",
+    acc_title: "Мой аккаунт", acc_hint: "Введи тег — учту силу бойцов, гаджеты, пассивки и снаряжение. Бот пришлёт ссылку.",
+    acc_find: "Найти", acc_forget: "Убрать аккаунт", acc_stats: "Бойцов: {n} · максимальной силы: {m}",
+    acc_missing: "у тебя этого нет",
+    acc_power: "сила {x} из 11", acc_no_gadget: "нет ни одного гаджета", acc_wrong_gadget: "нет гаджета «{x}»",
+    acc_no_sp: "нет пассивки", acc_wrong_sp: "нет пассивки «{x}»", acc_no_gear: "нет снаряжения",
   },
   en: {
     loading: "Loading stats…", load_err: "Couldn't load stats. Check your connection and reopen the app.",
@@ -245,6 +260,14 @@ const T = {
     map_open_tip: "Open map: longer range wins. Don't stand in snipers' line of fire.",
     map_closed_tip: "Closed map: control the bushes and check them with a shot before entering.",
     map_mid_tip: "Mixed map: play around cover and don't split up too far.",
+    g_speed: "{p}% bushes — Speed to close in through bushes",
+    g_vision: "{p}% bushes — Vision so enemies can't hide in bushes",
+    g_vision_enemy: "{p}% bushes and enemy close-range — Vision against ambushes",
+    acc_title: "My account", acc_hint: "Enter your tag — I'll account for power levels, gadgets, star powers and gears. The bot will send a link.",
+    acc_find: "Find", acc_forget: "Remove account", acc_stats: "Brawlers: {n} · max power: {m}",
+    acc_missing: "you don't have this",
+    acc_power: "power {x} of 11", acc_no_gadget: "no gadgets", acc_wrong_gadget: "missing gadget “{x}”",
+    acc_no_sp: "no star power", acc_wrong_sp: "missing star power “{x}”", acc_no_gear: "no gears",
   },
 };
 function params() { return new URLSearchParams(location.search); }
@@ -268,7 +291,9 @@ let D = null;            // app-data.json
 const B = {};            // ключ -> боец
 const API2K = {};        // имя из API -> ключ
 const ALIAS = [];        // [строка, ключ] для поиска
-const S = { maps: {}, mapB: {}, proB: {}, modeB: {}, vs: {}, wt: {}, builds: {}, ids: {}, lo: {}, raw: null };
+const S = { maps: {}, mapB: {}, proB: {}, modeB: {}, vs: {}, wt: {}, builds: {}, ids: {}, lo: {}, raw: null,
+  terrain: {}, items: {}, gearById: {} };   // items: ключ бойца -> {gadgets:[[id,name]], starPowers:[...]}
+let ACC = null;          // прокачка аккаунта: { name, b: { ключ: {power, gadgets:Set, sps:Set, gears:Set, hc} } }
 let OWNED = new Set();   // «мои бойцы» (хранится в Telegram CloudStorage)
 let ONLY_MINE = true;
 
@@ -287,10 +312,12 @@ function convPairs(obj) { const o = {}; for (const p in obj) { const [a, b] = p.
 function modeKey(m) { return D.api_mode[m] || m; }
 
 async function load() {
-  const [d, raw] = await Promise.all([
+  const [d, raw, terrain] = await Promise.all([
     fetch("app-data.json").then(r => r.json()),
     fetch(STATS_URL + (STATS_URL.includes("?") ? "&" : "?") + "t=" + Math.floor(Date.now() / 600000)).then(r => r.json()),
+    fetch("map-terrain.json").then(r => r.json()).catch(() => ({})),
   ]);
+  S.terrain = terrain;
   D = d;
   for (const b of D.brawlers) { B[b.k] = b; API2K[b.api] = b.k;
     for (const a of b.al.concat([b.ru.toLowerCase(), b.en.toLowerCase()])) ALIAS.push([a.replace(/ё/g, "е"), b.k]); }
@@ -303,7 +330,10 @@ async function load() {
   for (const m in raw.vs) S.vs[modeKey(m)] = convPairs(raw.vs[m]);
   for (const m in raw.with) S.wt[modeKey(m)] = convPairs(raw.with[m]);
   for (const n in (raw.builds || {})) S.builds[keyFromApi(n)] = raw.builds[n];
-  for (const n in (raw.brawler_list || {})) if (raw.brawler_list[n].id) S.ids[keyFromApi(n)] = raw.brawler_list[n].id;
+  for (const n in (raw.brawler_list || {})) { const e = raw.brawler_list[n], k = keyFromApi(n);
+    if (e.id) S.ids[k] = e.id; S.items[k] = { gadgets: e.gadgets || [], starPowers: e.starPowers || [] }; }
+  for (const k in S.builds) for (const [nm, id] of Object.entries(S.builds[k].ids || {}))
+    if (Math.floor(id / 1e6) === 62) S.gearById[id] = nm;
   for (const scope in (raw.loadouts || {})) {   // точные сборки: режим или "map:Карта"
     const key = scope.startsWith("map:") ? scope : modeKey(scope); const dst = S.lo[key] || (S.lo[key] = {});
     for (const n in raw.loadouts[scope]) dst[keyFromApi(n)] = raw.loadouts[scope][n]; }
@@ -378,9 +408,11 @@ function scoreOf(c, d, bs, open) {
   for (const e of d.enemy) { const dl = pairDelta(vs, c, e); score += dl * 80; if (dl > 0) good.push(e); else if (dl < 0) bad.push(e); }
   for (const a of d.ally) { const [x, y] = [a, c].sort(); const dl = pairDelta(wt, x, y); score += dl * 50; if (dl > 0) syn.push(a); }
   const [cp, notes] = composition(c, d.ally, open); score += cp;
+  const [ap, anotes] = (ONLY_MINE ? accountPenalty(c) : [0, []]); score += ap;
   if (good.length) why.push(["w_counters", good]); if (bad.length) why.push(["w_loses", bad]);
   if (syn.length) why.push(["w_synergy", syn]);
   for (const n of notes) why.push(["comp", n, cp > 0]);
+  for (const n of anotes) why.push(["acc", ...n]);
   if (!why.length) why.push([bs.meta ? "w_meta" : "w_rare"]);
   return { score, why };
 }
@@ -427,6 +459,30 @@ function contextBuild(c, map, mode) {
   }
   return Object.keys(res).length ? { ...res, where } : null;
 }
+// ---- Снаряжение под карту: кусты, дальность бойца, соперники ----
+const UNIVERSAL_GEARS = ["SPEED", "VISION", "SHIELD", "DAMAGE", "HEALTH", "GADGET COOLDOWN"];
+const REPLACE_ORDER = ["GADGET COOLDOWN", "HEALTH", "DAMAGE", "SHIELD"];   // что заменяем в первую очередь
+function bushShare(map, mode) {
+  if (map && S.terrain[map]) return S.terrain[map].bush;
+  const ms = Object.entries(S.maps).filter(([m, v]) => v.mode === mode && S.terrain[m]).map(([m]) => S.terrain[m].bush);
+  return ms.length ? ms.reduce((a, b) => a + b, 0) / ms.length : 0.15;
+}
+function gearRule(c, gears) {
+  const r = B[c] && B[c].rng; if (!r || !gears) return { gears, note: null };
+  const bush = bushShare(st.map, st.mode), pct = Math.round(bush * 100);
+  const enemyBush = st.enemy.filter(e => B[e] && (B[e].cls === "assassin" || B[e].rng === "short")).length;
+  let want = null, note = null;
+  if ((r === "short" || r === "tank") && bush >= 0.22) { want = "SPEED"; note = ["g_speed", pct]; }
+  else if ((r === "mid" || r === "long") && (bush >= 0.25 || (bush >= 0.15 && enemyBush >= 1))) {
+    want = "VISION"; note = enemyBush ? ["g_vision_enemy", pct] : ["g_vision", pct]; }
+  if (!want) return { gears, note: null };
+  if (gears.includes(want)) return { gears, note };
+  const out = gears.slice(0, 2);
+  const idx = REPLACE_ORDER.map(g => out.indexOf(g)).find(i => i >= 0);
+  if (idx === undefined) return { gears, note: null };   // оба — особые снаряжения бойца, не трогаем
+  out[idx] = want; return { gears: out, note };
+}
+
 function build(c) {
   const b = S.builds[c]; if (!b || (b.n || 0) < MIN_BUILD) return null; const res = { n: Math.round(b.n) };
   for (const kind of ["gadget", "sp"]) {
@@ -441,7 +497,61 @@ function build(c) {
   res.ids = b.ids || {};
   const cx = contextBuild(c, st.map, st.mode);   // поправка под карту/режим из точных сборок
   if (cx) { if (cx.g) res.gadget = [cx.g]; if (cx.sp) res.sp = [cx.sp]; if (cx.gear) res.gears = cx.gear.split("+"); res.where = cx.where; }
+  const gr = gearRule(c, res.gears); res.gears = gr.gears; res.gearNote = gr.note;
   return res;
+}
+
+// ---- Аккаунт игрока: бот присылает прокачку в ссылке (#acc=...) ----
+function b64urlToBytes(s) { s = s.replace(/-/g, "+").replace(/_/g, "/"); while (s.length % 4) s += "=";
+  const bin = atob(s); return Uint8Array.from(bin, ch => ch.charCodeAt(0)); }
+async function inflate(bytes) {   // версия 2: данные сжаты (raw deflate)
+  const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream("deflate-raw"));
+  return new Uint8Array(await new Response(stream).arrayBuffer());
+}
+async function decodeAcc(code, name) {
+  let by = b64urlToBytes(code);
+  if (by[0] === 2) by = Uint8Array.from([1, ...(await inflate(by.slice(1)))]);
+  if (by[0] !== 1) return null;
+  const idToKey = {}; for (const k in S.ids) idToKey[S.ids[k]] = k;
+  const acc = { name, b: {} }; let i = 1;
+  while (i + 3 < by.length) {
+    const id = 16000000 + by[i], power = by[i + 1], flags = by[i + 2], ng = by[i + 3]; i += 4;
+    const gearIds = Array.from(by.slice(i, i + ng)).map(x => 62000000 + x); i += ng;
+    const k = idToKey[id]; if (!k) continue; const it = S.items[k] || { gadgets: [], starPowers: [] };
+    acc.b[k] = { power,
+      gadgets: new Set(it.gadgets.filter((_, j) => flags & (1 << j)).map(x => x[1])),
+      sps: new Set(it.starPowers.filter((_, j) => flags & (1 << (j + 2))).map(x => x[1])),
+      hc: !!(flags & 16), gears: new Set(gearIds.map(g => S.gearById[g]).filter(Boolean)) };
+  }
+  return acc;
+}
+function cloudGet(key) { return new Promise(res => {
+  try { if (tg && tg.CloudStorage && tg.isVersionAtLeast && tg.isVersionAtLeast("6.9")) {
+    tg.CloudStorage.getItem(key, (err, v) => res(err ? safeGet(key) : (v || safeGet(key)))); return; } } catch (e) {}
+  res(safeGet(key)); }); }
+function cloudSet(key, v) { safeSet(key, v);
+  try { if (tg && tg.CloudStorage && tg.isVersionAtLeast && tg.isVersionAtLeast("6.9")) tg.CloudStorage.setItem(key, v); } catch (e) {} }
+async function loadAccount() {
+  const h = new URLSearchParams(location.hash.slice(1));
+  let code = h.get("acc"), name = h.get("name");
+  if (code) { cloudSet("acc", code); cloudSet("acc_name", name || ""); history.replaceState(null, "", location.pathname + location.search); }
+  else { code = await cloudGet("acc"); name = await cloudGet("acc_name"); }
+  if (!code) return;
+  try { ACC = await decodeAcc(code, name || ""); } catch (e) { ACC = null; console.error(e); }
+  if (ACC) OWNED = new Set(Object.keys(ACC.b));   // аккаунт заменяет ручной список «Мои бойцы»
+}
+// Штраф за прокачку: слабая сила, нет нужного гаджета/пассивки/снаряжения
+function accountPenalty(c) {
+  if (!ACC || !ACC.b[c]) return [0, []];
+  const a = ACC.b[c], notes = []; let pts = 0;
+  if (a.power < 11) { pts -= (11 - a.power) * 2; notes.push(["acc_power", a.power]); }
+  const bd = build(c);
+  if (!a.gadgets.size) { pts -= 10; notes.push(["acc_no_gadget"]); }
+  else if (bd && bd.gadget && !bd.gadget.some(x => a.gadgets.has(x))) { pts -= 3; notes.push(["acc_wrong_gadget", thing(bd.gadget[0])]); }
+  if (!a.sps.size) { pts -= 8; notes.push(["acc_no_sp"]); }
+  else if (bd && bd.sp && !bd.sp.some(x => a.sps.has(x))) { pts -= 3; notes.push(["acc_wrong_sp", thing(bd.sp[0])]); }
+  if (!a.gears.size) { pts -= 3; notes.push(["acc_no_gear"]); }
+  return [pts, notes];
 }
 
 // ================= состояние драфта =================
@@ -487,7 +597,8 @@ function renderModes() {
   app.innerHTML = `<div class="topbar"><div class="grow"><div class="title">${t("choose_mode")}</div><div class="sub">${upd}</div></div>${langBtn()}</div>
     <div class="modes">${modes.map(m => `<button class="mode" data-mode="${m}">
       <img src="${CDN}/game-modes/regular/${D.modes[m].id}.png" alt="" onerror="this.style.visibility='hidden'">${esc(modeName(m))}</button>`).join("")}</div>
-    <button class="big" style="background:var(--panel);margin-top:14px" data-act="my">⭐ ${t("my")}${OWNED.size ? ` · ${OWNED.size}` : ""}</button>`;
+    ${accHtml()}
+    ${ACC ? "" : `<button class="big" style="background:var(--panel);margin-top:14px" data-act="my">⭐ ${t("my")}${OWNED.size ? ` · ${OWNED.size}` : ""}</button>`}`;
 }
 
 function renderMaps() {
@@ -534,6 +645,16 @@ function renderFirst() {   // экран «План на карту» + выбо
   dock.innerHTML = `<button class="us2" data-first="us">🔵 ${t("we_first")}</button><button class="them2" data-first="them">🔴 ${t("they_first")}</button>`;
 }
 
+function accHtml() {
+  if (ACC) {
+    const n = Object.keys(ACC.b).length, maxed = Object.values(ACC.b).filter(x => x.power >= 11).length;
+    return `<div class="acc"><b>👤 ${esc(ACC.name || t("acc_title"))}</b><div class="sub" style="margin:4px 0 0">${t("acc_stats", { n, m: maxed })}</div>
+      <div class="row2"><button class="ghost" data-act="accforget">${t("acc_forget")}</button></div></div>`;
+  }
+  return `<div class="acc"><b>👤 ${t("acc_title")}</b><div class="sub" style="margin:4px 0 0">${t("acc_hint")}</div>
+    <div class="row2"><input id="tag" placeholder="#2PP0VYJ8" maxlength="12" autocomplete="off"><button data-act="accfind">${t("acc_find")}</button></div></div>`;
+}
+
 function renderMy() {
   app.innerHTML = `<div class="topbar"><button class="iconbtn" data-act="back" aria-label="${t("back")}">‹</button>
     <div class="grow"><div class="title" style="margin:0">${t("my_title")}</div></div>${langBtn()}</div>
@@ -564,6 +685,7 @@ function slots(list, n, cls, nextIdx) {
 function whyText(w) {
   const names = l => l.map(bname).join(", ");
   if (w[0] === "comp") return (w[2] ? "👍 " : "⚠️ ") + t(w[1]);
+  if (w[0] === "acc") return "🔒 " + t(w[1], { x: w[2] });
   if (w[0] === "w_counters" || w[0] === "w_loses" || w[0] === "w_synergy") return t(w[0], { l: names(w[1]) });
   return t(w[0]);
 }
@@ -571,10 +693,13 @@ function whyText(w) {
 function buildHtml(c) {
   const b = build(c); if (!b) return "";
   const icon = (dir, name) => b.ids[name] ? `<img src="${CDN}/${dir}/regular/${b.ids[name]}.png" alt="" loading="lazy" onerror="this.remove()">` : "";
+  const a = ACC && ACC.b[c];
+  const mark = (set, x) => a && !set.has(x) ? ` <s class="miss" title="${esc(t("acc_missing"))}">✖</s>` : "";
   const parts = [];
-  if (b.gadget) parts.push(`<span>${b.gadget.map(x => icon("gadgets", x) + esc(thing(x))).join(" / ")}</span>`);
-  if (b.sp) parts.push(`<span>${b.sp.map(x => icon("star-powers", x) + esc(thing(x))).join(" / ")}</span>`);
-  if (b.gears) parts.push(`<span>${b.gears.map(x => icon("gears", x) + esc(thing(x))).join(" + ")}</span>`);
+  if (b.gadget) parts.push(`<span>${b.gadget.map(x => icon("gadgets", x) + esc(thing(x)) + (a ? mark(a.gadgets, x) : "")).join(" / ")}</span>`);
+  if (b.sp) parts.push(`<span>${b.sp.map(x => icon("star-powers", x) + esc(thing(x)) + (a ? mark(a.sps, x) : "")).join(" / ")}</span>`);
+  if (b.gears) parts.push(`<span>${b.gears.map(x => icon("gears", x) + esc(thing(x)) + (a ? mark(a.gears, x) : "")).join(" + ")}</span>`);
+  if (b.gearNote) parts.push(`<span class="where">🌿 ${esc(t(b.gearNote[0], { p: b.gearNote[1] }))}</span>`);
   const where = b.where ? `<span class="where">${t(b.where === "map" ? "for_map" : "for_mode")}</span>` : "";
   return `<div class="build">${parts.join("")}${where}</div>`;
 }
@@ -688,6 +813,13 @@ document.addEventListener("click", e => {
   else if (act === "bansdone") { snap(); st.stage = "picks"; haptic("light"); render(); }
   else if (act === "lang") { LANG = LANG === "ru" ? "en" : "ru"; safeSet("lang", LANG); document.documentElement.lang = LANG; render(); }
   else if (act === "back") goBack();
+  else if (act === "accfind") {
+    const tag = (document.getElementById("tag").value || "").toUpperCase().replace(/[^0289PYLQGRJCUV]/g, "");
+    if (tag.length < 3) { document.getElementById("tag").focus(); return; }
+    const link = `https://t.me/${BOT_USERNAME}?start=tag_${tag}`;
+    if (tg) { tg.openTelegramLink(link); try { tg.close(); } catch (e) {} } else location.href = link;
+  }
+  else if (act === "accforget") { ACC = null; OWNED = new Set(); cloudSet("acc", ""); cloudSet("acc_name", ""); loadOwned().then(render); }
   else if (act === "my") { st.stage = "my"; st.q = ""; render(); window.scrollTo(0, 0); }
   else if (act === "myall") { Object.keys(B).forEach(k => OWNED.add(k)); saveOwned(); render(); }
   else if (act === "mynone") { OWNED.clear(); saveOwned(); render(); }
@@ -700,7 +832,7 @@ function goBack() { if (st.stage === "first") st.stage = "map"; else if (st.stag
   if (tg) { tg.ready(); tg.expand(); try { tg.setHeaderColor("#1B2A6B"); tg.setBackgroundColor("#1B2A6B"); } catch (e) {}
     tg.BackButton.onClick(goBack); }
   app.innerHTML = `<div class="empty">${t("loading")}</div>`;
-  try { await Promise.all([load(), loadOwned()]); } catch (e) { app.innerHTML = `<div class="empty">${t("load_err")}</div>`; console.error(e); return; }
+  try { await Promise.all([load(), loadOwned()]); await loadAccount(); } catch (e) { app.innerHTML = `<div class="empty">${t("load_err")}</div>`; console.error(e); return; }
   render();
 })();
 </script>
