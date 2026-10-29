@@ -102,6 +102,21 @@ img { display: block; }
 .rec .build span { display: inline-flex; align-items: center; gap: 4px; }
 .rec .build img { width: 20px; height: 20px; object-fit: contain; }
 .rec .build .where { font-weight: 700; font-size: 11px; opacity: .75; }
+.minis { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+.mini { display: inline-flex; flex-direction: column; align-items: center; width: 64px; font-size: 11px; text-align: center; }
+.mini img, .mini .ph { width: 52px; height: 52px; border-radius: var(--r-sm); border: 2px solid var(--ink); object-fit: cover; font-size: 16px; }
+.mini b { font-weight: 700; margin-top: 3px; line-height: 1.15; }
+.planrow { display: flex; align-items: center; gap: 6px; padding: 8px; margin-bottom: 8px; border-radius: var(--r-md);
+  background: var(--panel); border: 3px solid var(--ink); }
+.planrow .lbl2 { font-size: 12px; font-weight: 700; color: var(--muted); width: 58px; }
+.planrow .arrow { font-weight: 900; color: var(--gold); font-size: 18px; }
+.dock .us2 { background: var(--blue); } .dock .them2 { background: var(--red); }
+.adv { background: var(--panel); border: 3px solid var(--ink); border-radius: var(--r-lg); padding: 12px; margin-bottom: 10px; box-shadow: 0 4px 0 var(--ink); }
+.adv p { margin: 6px 0; }
+.lane { display: flex; align-items: center; gap: 8px; margin: 6px 0; }
+.lane .vs { font-weight: 900; color: var(--muted); }
+.lane .tag { margin-left: auto; font-size: 12px; font-weight: 800; padding: 3px 9px; border-radius: 999px; border: 2px solid var(--ink); }
+.tag.good { background: #3ad07a; color: var(--ink); } .tag.even { background: var(--panel-hi); } .tag.bad { background: var(--red); }
 .mine { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 12px 0 0; }
 .toggle { border: 2px solid var(--ink); border-radius: 999px; padding: 5px 12px; font-weight: 800; font-size: 12px; background: var(--panel); }
 .toggle.on { background: var(--gold); color: var(--ink); }
@@ -162,7 +177,7 @@ const T = {
     enemy_hint: "Тапни бойца, которого взяли соперники.", your_hint: "Тапни совет или любого бойца, которого вы взяли.",
     pair: "Советую пару", then: "Если взяли {name}, к нему:", niche: "Нишевый вариант — берут редко",
     search: "Поиск бойца", undo: "Отменить", new: "Новый драфт", us: "Вы", them: "Враги", bans: "Баны",
-    done: "Драфт готов. Удачи в игре!", stats: "{games} игр Легенда+ · обновлено {upd}",
+    done: "Драфт готов", stats: "{games} игр Легенда+ · обновлено {upd}",
     open: "Открытая карта · дальних пиков {p}%", closed: "Закрытая карта · дальних пиков {p}%", mid: "Средняя карта · дальних пиков {p}%",
     ban_sugg: "Чаще всего стоит банить", nothing: "Не нашёл подходящих бойцов",
     w_counters: "контрит {l}", w_loses: "проигрывает {l}", w_synergy: "хорошо с {l}", w_pro: "берут про-игроки",
@@ -172,6 +187,25 @@ const T = {
     back: "Назад", for_map: "сборка под эту карту", for_mode: "сборка под этот режим",
     my: "Мои бойцы", my_title: "Мои бойцы", my_hint: "Отметь бойцов, на которых играешь. Советы будут только из них.",
     my_count: "Отмечено: {n}", only_mine: "Только мои", all: "Все бойцы", save: "Готово", select_all: "Выбрать всех", clear: "Снять всё",
+    plan_title: "План на карту", plan_hint: "Открой это, пока ищется игра, — на драфте думать не придётся.",
+    plan_bans: "Баньте", plan_first: "Если первыми пикаете вы", plan_first_hint: "Берите первого из списка, кто не забанен.",
+    plan_second: "Если первыми пикают соперники", plan_if: "Возьмут", plan_start: "Когда начнётся драфт, нажми:",
+    adv_title: "Как играть", adv_lanes: "Кто против кого", adv_good: "выгодно", adv_even: "на равных", adv_bad: "тяжело",
+    adv_threat: "Главная угроза — {x}: фокусьте его первым и не стойте против него в одиночку.",
+    adv_no_threat: "Явной угрозы нет: составы примерно равны, решит игра.",
+    t_dive: "{x} будут нырять в ваших дальних бойцов — держитесь вместе и берегите контроль (гаджет, супер) на их заход.",
+    t_long: "У соперников дальний урон ({x}) — не выходите в открытую, подходите через кусты и стены.",
+    t_tanks: "{x} пойдут в лицо — держите дистанцию и сводите урон на них вместе.",
+    t_carrier: "Кристаллы лучше отдать бойцу {x}: его сложнее всего убить.",
+    m_gem: "Захват: не рискуйте носителем кристаллов; при 7+ кристаллах отступайте и играйте от обороны.",
+    m_ball: "Броулбол: копите суперы, чтобы ломать стены и отбирать мяч; не бейте по воротам без поддержки.",
+    m_knockout: "Нокаут: первый размен решает раунд — не выходите вперёд в одиночку и дождитесь газа, если ведёте.",
+    m_hotzone: "Горячая зона: держите зону минимум вдвоём; контроль и метатели — главные в зоне.",
+    m_heist: "Ограбление: решите заранее, кто защищает сейф, а кто давит; считайте урон по сейфам.",
+    m_bounty: "Награда: не умирайте со звёздами; ведёте по звёздам — отходите и стерегите.",
+    map_open_tip: "Карта открытая: побеждает тот, кто бьёт дальше. Не стойте на линии огня снайперов.",
+    map_closed_tip: "Карта закрытая: контролируйте кусты, проверяйте их выстрелом перед входом.",
+    map_mid_tip: "Карта смешанная: играйте от укрытий и не разделяйтесь далеко.",
   },
   en: {
     loading: "Loading stats…", load_err: "Couldn't load stats. Check your connection and reopen the app.",
@@ -182,7 +216,7 @@ const T = {
     enemy_hint: "Tap the brawler the enemies picked.", your_hint: "Tap a suggestion or any brawler you picked.",
     pair: "Suggested pair", then: "If you took {name}, add:", niche: "Niche option — rarely picked",
     search: "Search brawler", undo: "Undo", new: "New draft", us: "Us", them: "Enemy", bans: "Bans",
-    done: "Draft complete. Good luck!", stats: "{games} Legendary+ games · updated {upd}",
+    done: "Draft complete", stats: "{games} Legendary+ games · updated {upd}",
     open: "Open map · {p}% long-range picks", closed: "Closed map · {p}% long-range picks", mid: "Medium map · {p}% long-range picks",
     ban_sugg: "Best bans here", nothing: "No suitable brawlers found",
     w_counters: "counters {l}", w_loses: "loses to {l}", w_synergy: "good with {l}", w_pro: "picked by pros",
@@ -192,6 +226,25 @@ const T = {
     back: "Back", for_map: "build for this map", for_mode: "build for this mode",
     my: "My brawlers", my_title: "My brawlers", my_hint: "Mark the brawlers you play. Suggestions will use only them.",
     my_count: "Selected: {n}", only_mine: "Only mine", all: "All brawlers", save: "Done", select_all: "Select all", clear: "Clear all",
+    plan_title: "Map plan", plan_hint: "Open this while queueing — no thinking needed during the draft.",
+    plan_bans: "Ban", plan_first: "If you pick first", plan_first_hint: "Take the first one on the list that isn't banned.",
+    plan_second: "If the enemy picks first", plan_if: "If they take", plan_start: "When the draft starts, tap:",
+    adv_title: "How to play", adv_lanes: "Who faces whom", adv_good: "favourable", adv_even: "even", adv_bad: "tough",
+    adv_threat: "Main threat — {x}: focus them first and don't fight them alone.",
+    adv_no_threat: "No clear threat: the teams are about even, it's down to play.",
+    t_dive: "{x} will dive your long-range brawlers — stay together and save control (gadget, super) for their dive.",
+    t_long: "The enemy has long-range damage ({x}) — don't walk in the open, approach through bushes and walls.",
+    t_tanks: "{x} will rush you — keep distance and focus them together.",
+    t_carrier: "Let {x} carry the gems: they're the sturdiest.",
+    m_gem: "Gem Grab: don't risk the gem carrier; at 7+ gems fall back and defend.",
+    m_ball: "Brawl Ball: save supers to break walls and steal the ball; don't shoot at goal without support.",
+    m_knockout: "Knockout: the first trade decides the round — don't push alone, wait for the gas if you lead.",
+    m_hotzone: "Hot Zone: hold the zone with at least two; controllers and throwers are key.",
+    m_heist: "Heist: decide early who defends and who pushes; track damage on both safes.",
+    m_bounty: "Bounty: don't die with stars; when ahead, fall back and protect the lead.",
+    map_open_tip: "Open map: longer range wins. Don't stand in snipers' line of fire.",
+    map_closed_tip: "Closed map: control the bushes and check them with a shot before entering.",
+    map_mid_tip: "Mixed map: play around cover and don't split up too far.",
   },
 };
 function params() { return new URLSearchParams(location.search); }
@@ -418,6 +471,7 @@ function langBtn() { return `<button class="iconbtn" data-act="lang" aria-label=
 
 function render() {
   if (tg) { tg.BackButton[["map", "first", "my"].includes(st.stage) ? "show" : "hide"](); }
+  if (st.stage !== "first" && st.stage !== "my" && !["bans", "picks", "done"].includes(st.stage)) dock.hidden = true;
   if (st.stage === "mode") return renderModes();
   if (st.stage === "map") return renderMaps();
   if (st.stage === "first") return renderFirst();
@@ -449,13 +503,35 @@ function renderMaps() {
       <button class="mapcard nomap" data-map="">${t("no_map")}</button></div>`;
 }
 
-function renderFirst() {
-  dock.hidden = true;
+function mini(k) {   // маленький портрет с подписью для плана
+  return `<span class="mini">${imgOr(brawlerImg(k), initials(k), bname(k))}<b>${esc(bname(k))}</b></span>`;
+}
+function popular(map, mode, exclude, n) {   // чаще всего берут на этой карте
+  const tab = (map && S.mapB[map]) || S.modeB[mode] || {};
+  return Object.keys(tab).filter(k => !exclude.has(k)).sort((a, b) => tab[b][0] - tab[a][0]).slice(0, n);
+}
+function renderFirst() {   // экран «План на карту» + выбор, кто пикает первым
+  let body = "";
+  if (hasMap(st.map, st.mode)) {
+    const bans = banCandidates(st.map, st.mode, new Set()).slice(0, 3);
+    const base = { map: st.map, mode: st.mode, bans, ally: [], enemy: [] };
+    const firsts = recommend(base, 4);
+    const enemyFirst = popular(st.map, st.mode, new Set(bans), 3).map(x => {
+      const d = { ...base, enemy: [x] }; const a = recommend(d, 1)[0];
+      const b = a ? recommend({ ...d, ally: [a.c] }, 1)[0] : null; return [x, a, b]; });
+    body = `<div class="sub" style="margin:8px 2px 12px">${t("plan_hint")}</div>
+      <div class="sect">🚫 ${t("plan_bans")}</div><div class="minis">${bans.map(mini).join("")}</div>
+      <div class="sect">🔵 ${t("plan_first")}</div><div class="hint" style="margin:0 2px 8px">${t("plan_first_hint")}</div>
+      <div class="recs">${firsts.map((r, i) => recCard(r, i === 0, true)).join("")}</div>
+      <div class="sect">🔴 ${t("plan_second")}</div>
+      ${enemyFirst.map(([x, a, b]) => `<div class="planrow"><span class="lbl2">${t("plan_if")}</span>${mini(x)}<span class="arrow">→</span>${a ? mini(a.c) : ""}${b ? mini(b.c) : ""}</div>`).join("")}`;
+  }
   app.innerHTML = `<div class="topbar"><button class="iconbtn" data-act="back" aria-label="${t("back")}">‹</button>
     <div class="grow"><div class="title" style="margin:0">${esc(st.map ? thing(st.map) : modeName(st.mode))}</div></div>${langBtn()}</div>
-    ${mapLabel()}<div class="title" style="margin-top:18px">${t("who_first")}</div>
-    <button class="big us" data-first="us">${t("we_first")}</button>
-    <button class="big them" data-first="them">${t("they_first")}</button>`;
+    ${mapLabel()}${body ? `<div class="title" style="margin-top:14px">${t("plan_title")}</div>${body}` : ""}
+    <div class="sect" style="margin-top:16px">${t("plan_start")}</div>`;
+  dock.hidden = false;
+  dock.innerHTML = `<button class="us2" data-first="us">🔵 ${t("we_first")}</button><button class="them2" data-first="them">🔴 ${t("they_first")}</button>`;
 }
 
 function renderMy() {
@@ -503,12 +579,42 @@ function buildHtml(c) {
   return `<div class="build">${parts.join("")}${where}</div>`;
 }
 
-function recCard(r, top) {
+function recCard(r, top, staticCard) {
   const role = roleName(B[r.c] ? B[r.c].cls : "");
-  return `<button class="rec ${top ? "top" : ""}" data-k="${r.c}">
+  return `<button class="rec ${top ? "top" : ""}" ${staticCard ? 'tabindex="-1" style="pointer-events:none"' : `data-k="${r.c}"`}>
     <div class="ava">${imgOr(brawlerImg(r.c), initials(r.c), bname(r.c))}</div>
     <div><div class="nm">${esc(bname(r.c))}${role ? `<span class="cls">${esc(role)}</span>` : ""}</div>
     <div class="why">${r.why.map(whyText).map(esc).join(" · ")}</div>${buildHtml(r.c)}</div></button>`;
+}
+
+function matchup(a, e) {   // сглаженный винрейт a против e в этом режиме
+  const [g, w] = (S.vs[st.mode] || {})[a + "|" + e] || [0, 0]; return (w + 10) / (g + 20);
+}
+function perms(a) { return a.length <= 1 ? [a] : a.flatMap((x, i) => perms(a.slice(0, i).concat(a.slice(i + 1))).map(p => [x, ...p])); }
+function adviceHtml() {
+  const A = st.ally, E = st.enemy; if (A.length < 3 || E.length < 3) return "";
+  const names = l => l.map(bname).join(", ");
+  // кто против кого: перебираем все 6 расстановок и берём самую выгодную для вас
+  let best = null;
+  for (const p of perms(E)) { const sc = A.reduce((s, a, i) => s + matchup(a, p[i]), 0); if (!best || sc > best[0]) best = [sc, p]; }
+  const lanes = A.map((a, i) => { const m = matchup(a, best[1][i]); const tag = m >= .53 ? "good" : m <= .47 ? "bad" : "even";
+    return `<div class="lane">${mini(a)}<span class="vs">vs</span>${mini(best[1][i])}<span class="tag ${tag}">${t("adv_" + tag)}</span></div>`; }).join("");
+  // главная угроза: враг с наибольшим перевесом над вашей тройкой
+  const threat = E.map(e => [e, A.reduce((s, a) => s + (.5 - matchup(a, e)), 0)]).sort((x, y) => y[1] - x[1])[0];
+  const tips = [threat[1] > .03 ? t("adv_threat", { x: bname(threat[0]) }) : t("adv_no_threat")];
+  const rng = k => B[k] && B[k].rng, cls = k => B[k] && B[k].cls;
+  const divers = E.filter(k => cls(k) === "assassin"), longE = E.filter(k => rng(k) === "long"), tanksE = E.filter(k => rng(k) === "tank");
+  const open = openness(st.map, st.mode);
+  if (divers.length && A.some(k => rng(k) === "long")) tips.push(t("t_dive", { x: names(divers) }));
+  if (longE.length && (open >= OPEN_MAP || A.filter(k => ["short", "tank"].includes(rng(k))).length >= 2)) tips.push(t("t_long", { x: names(longE) }));
+  if (tanksE.length) tips.push(t("t_tanks", { x: names(tanksE) }));
+  if (st.mode === "gem") { const order = ["tank", "support", "controller", "damage", "marksman", "artillery", "assassin"];
+    const carrier = [...A].sort((a, b) => order.indexOf(cls(a)) - order.indexOf(cls(b)))[0]; tips.push(t("t_carrier", { x: bname(carrier) })); }
+  tips.push(t("m_" + st.mode));
+  if (hasMap(st.map, st.mode)) tips.push(t(open >= OPEN_MAP ? "map_open_tip" : open <= CLOSED_MAP ? "map_closed_tip" : "map_mid_tip"));
+  return `<div class="title" style="margin-top:6px">${t("adv_title")}</div>
+    <div class="adv"><div class="sect" style="margin-top:0">${t("adv_lanes")}</div>${lanes}</div>
+    <div class="adv">${tips.map(x => `<p>• ${esc(x)}</p>`).join("")}</div>`;
 }
 
 function renderDraft() {
@@ -534,7 +640,7 @@ function renderDraft() {
         ${second.length ? `<div class="sect">${t("then", { name: esc(bname(first[0].c)) })}</div><div class="recs">${second.map(r => recCard(r, false)).join("")}</div>` : ""}`; }
     const ni = niche(d); if (ni.length) recs += `<div class="sect">🧪 ${t("niche")}</div><div class="recs">${ni.map(r => recCard(r, false)).join("")}</div>`;
   } else if (st.stage === "done") {
-    phase = `<div class="done">🏁 ${t("done")}</div>`;
+    phase = `<div class="done">🏁 ${t("done")}</div>` + adviceHtml();
   }
   const title = st.map ? thing(st.map) : modeName(st.mode);
   app.innerHTML = `<div class="topbar"><img src="${CDN}/game-modes/regular/${D.modes[st.mode].id}.png" alt="" width="34" height="34" style="object-fit:contain" onerror="this.style.visibility='hidden'">
