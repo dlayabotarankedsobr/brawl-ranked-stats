@@ -137,6 +137,8 @@ def add_profile(builds, profile):
             items = b.get("gadgets" if kind == "gadget" else "starPowers") or []
             for it in items:
                 B[f"{kind}_own"][it["name"]] = B[f"{kind}_own"].get(it["name"], 0) + 1
+                if it.get("id"):
+                    B.setdefault("ids", {})[it["name"]] = it["id"]
             if len(items) == 1:
                 nm = items[0]["name"]
                 B[f"{kind}_only"][nm] = B[f"{kind}_only"].get(nm, 0) + 1
@@ -146,6 +148,8 @@ def add_profile(builds, profile):
             B["n_gear"] += 1
             for g in gears:
                 B["gear"][g["name"]] = B["gear"].get(g["name"], 0) + 1
+                if g.get("id"):
+                    B.setdefault("ids", {})[g["name"]] = g["id"]
         if b.get("hyperCharges"):
             B["hc"] += 1
 
@@ -153,7 +157,7 @@ def add_profile(builds, profile):
 def decay_builds(builds, k):
     def walk(x):
         if isinstance(x, dict):
-            return {key: walk(v) for key, v in x.items()}
+            return {key: (v if key == "ids" else walk(v)) for key, v in x.items()}
         return round(x * k, 3) if isinstance(x, (int, float)) else x
     return walk(builds)
 
@@ -323,6 +327,9 @@ def main():
             if day not in days:
                 days[day] = load_json(DAILY / f"{day}.json", None) or new_day()
             add_battle(days[day], mode, map_, names, winner, pro=pro_game)
+            mid = (item.get("event") or {}).get("id")
+            if mid:  # ID карты — для картинок в мини-приложении
+                days[day].setdefault("map_ids", {})[map_] = mid
             for t in tags:  # игроков из сильных игр — в очередь на просмотр сборок
                 if t not in profiled:
                     profiled[t] = "queued"

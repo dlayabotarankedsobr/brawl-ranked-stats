@@ -41,6 +41,8 @@ def main():
             m["games"] += g
             if f.stem >= recent:
                 m["recent_games"] += g
+            if d.get("map_ids", {}).get(map_):
+                m["id"] = d["map_ids"][map_]
             add(out["brawlers"].setdefault(map_, {}), d["brawlers"].get(map_, {}))
             add(out["pro"].setdefault(map_, {}), d.get("pro_brawlers", {}).get(map_, {}))
             add(out["mode_brawlers"].setdefault(mode, {}), d["brawlers"].get(map_, {}))
