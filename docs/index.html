@@ -102,6 +102,29 @@ img { display: block; }
 .rec .build span { display: inline-flex; align-items: center; gap: 4px; }
 .rec .build img { width: 20px; height: 20px; object-fit: contain; }
 .rec .build .where { font-weight: 700; font-size: 11px; opacity: .75; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 8px; }
+.pgrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+@media (min-width: 560px) { .pgrid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.pc { min-width: 0; background: var(--panel); border: 3px solid var(--ink); border-radius: var(--r-md); padding: 8px; box-shadow: 0 3px 0 var(--ink); }
+.pc.max { border-color: #6b4f00; background: linear-gradient(180deg, #2E45B8, var(--panel)); }
+.pc-top { display: flex; align-items: center; gap: 8px; }
+.pc-ava { position: relative; width: 46px; height: 46px; flex: none; border-radius: var(--r-sm); border: 2px solid var(--ink); overflow: visible; }
+.pc-ava img, .pc-ava .ph { width: 100%; height: 100%; object-fit: cover; border-radius: 7px; font-size: 15px; }
+.pw { position: absolute; right: -8px; bottom: -8px; min-width: 24px; height: 24px; padding: 0 4px; border-radius: 999px;
+  display: grid; place-items: center; font-weight: 900; font-size: 13px; background: #fff; color: var(--ink); border: 2px solid var(--ink); }
+.pc.max .pw { background: var(--gold); }
+.pc-name { font-weight: 900; font-size: 14px; line-height: 1.15; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.pc-row { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; margin-top: 8px; }
+.it { width: 24px; height: 24px; display: inline-grid; place-items: center; font-size: 12px; font-weight: 900; border-radius: 6px; background: rgba(14,18,48,.45); }
+.it img { width: 24px; height: 24px; object-fit: contain; }
+.it.off { opacity: .22; filter: grayscale(1); }
+.it.hc { color: #c77dff; font-size: 15px; }
+.it.gear { background: transparent; }
+.pc-row.bf b { font-size: 10.5px; font-weight: 800; color: var(--muted); }
+.pc-row.bf { gap: 3px; }
+.pc-row.bf b { width: 100%; }
+.pc-row.bf span { font-size: 10px; font-weight: 800; padding: 1px 5px; border-radius: 999px; border: 2px solid var(--ink); opacity: .35; }
+.pc-row.bf span.on { opacity: 1; background: #ff7ad9; color: var(--ink); }
 .miss { color: var(--red); text-decoration: none; font-weight: 900; }
 .acc { background: var(--panel); border: 3px solid var(--ink); border-radius: var(--r-lg); padding: 12px; margin-top: 14px; box-shadow: 0 4px 0 var(--ink); }
 .acc .row2 { display: flex; gap: 8px; margin-top: 8px; }
@@ -217,7 +240,10 @@ const T = {
     g_vision: "кустов {p}% — «Зрение», чтобы враг не прятался в кустах",
     g_vision_enemy: "кустов {p}% и у врага ближний бой — «Зрение» против засад",
     acc_title: "Мой аккаунт", acc_hint: "Введи тег — учту силу бойцов, гаджеты, пассивки и снаряжение. Бот пришлёт ссылку.",
-    acc_find: "Найти", acc_forget: "Убрать аккаунт", acc_stats: "Бойцов: {n} · максимальной силы: {m}",
+    acc_find: "Найти", acc_forget: "Убрать", acc_open: "Профиль",
+    hc: "Гиперзаряд", bf: "Баффи", bf_g: "гаджет", bf_s: "пасс.", bf_h: "гипер",
+    p_brawlers: "Бойцы {n}/{t}", p_max: "Сила 11: {n}", p_gadgets: "Гаджеты: {n}", p_sps: "Пассивки: {n}",
+    p_hc: "Гиперзаряды: {n}", p_buffies: "Баффи: {n}", p_gears: "Снаряжение: {n}", acc_stats: "Бойцов: {n} · максимальной силы: {m}",
     acc_missing: "у тебя этого нет",
     acc_power: "сила {x} из 11", acc_no_gadget: "нет ни одного гаджета", acc_wrong_gadget: "нет гаджета «{x}»",
     acc_no_sp: "нет пассивки", acc_wrong_sp: "нет пассивки «{x}»", acc_no_gear: "нет снаряжения",
@@ -264,7 +290,10 @@ const T = {
     g_vision: "{p}% bushes — Vision so enemies can't hide in bushes",
     g_vision_enemy: "{p}% bushes and enemy close-range — Vision against ambushes",
     acc_title: "My account", acc_hint: "Enter your tag — I'll account for power levels, gadgets, star powers and gears. The bot will send a link.",
-    acc_find: "Find", acc_forget: "Remove account", acc_stats: "Brawlers: {n} · max power: {m}",
+    acc_find: "Find", acc_forget: "Remove", acc_open: "Profile",
+    hc: "Hypercharge", bf: "Buffies", bf_g: "gadget", bf_s: "star", bf_h: "hyper",
+    p_brawlers: "Brawlers {n}/{t}", p_max: "Power 11: {n}", p_gadgets: "Gadgets: {n}", p_sps: "Star Powers: {n}",
+    p_hc: "Hypercharges: {n}", p_buffies: "Buffies: {n}", p_gears: "Gears: {n}", acc_stats: "Brawlers: {n} · max power: {m}",
     acc_missing: "you don't have this",
     acc_power: "power {x} of 11", acc_no_gadget: "no gadgets", acc_wrong_gadget: "missing gadget “{x}”",
     acc_no_sp: "no star power", acc_wrong_sp: "missing star power “{x}”", acc_no_gear: "no gears",
@@ -521,7 +550,8 @@ async function decodeAcc(code, name) {
     acc.b[k] = { power,
       gadgets: new Set(it.gadgets.filter((_, j) => flags & (1 << j)).map(x => x[1])),
       sps: new Set(it.starPowers.filter((_, j) => flags & (1 << (j + 2))).map(x => x[1])),
-      hc: !!(flags & 16), gears: new Set(gearIds.map(g => S.gearById[g]).filter(Boolean)) };
+      hc: !!(flags & 16), gears: new Set(gearIds.map(g => S.gearById[g]).filter(Boolean)), gearIds,
+      buffies: { g: !!(flags & 32), s: !!(flags & 64), h: !!(flags & 128) } };
   }
   return acc;
 }
@@ -580,12 +610,13 @@ const app = document.getElementById("app"), dock = document.getElementById("dock
 function langBtn() { return `<button class="iconbtn" data-act="lang" aria-label="Language">${LANG === "ru" ? "EN" : "RU"}</button>`; }
 
 function render() {
-  if (tg) { tg.BackButton[["map", "first", "my"].includes(st.stage) ? "show" : "hide"](); }
+  if (tg) { tg.BackButton[["map", "first", "my", "profile"].includes(st.stage) ? "show" : "hide"](); }
   if (st.stage !== "first" && st.stage !== "my" && !["bans", "picks", "done"].includes(st.stage)) dock.hidden = true;
   if (st.stage === "mode") return renderModes();
   if (st.stage === "map") return renderMaps();
   if (st.stage === "first") return renderFirst();
   if (st.stage === "my") return renderMy();
+  if (st.stage === "profile") return renderProfile();
   return renderDraft();
 }
 
@@ -649,10 +680,52 @@ function accHtml() {
   if (ACC) {
     const n = Object.keys(ACC.b).length, maxed = Object.values(ACC.b).filter(x => x.power >= 11).length;
     return `<div class="acc"><b>👤 ${esc(ACC.name || t("acc_title"))}</b><div class="sub" style="margin:4px 0 0">${t("acc_stats", { n, m: maxed })}</div>
-      <div class="row2"><button class="ghost" data-act="accforget">${t("acc_forget")}</button></div></div>`;
+      <div class="row2"><button data-act="profile">${t("acc_open")}</button><button class="ghost" data-act="accforget">${t("acc_forget")}</button></div></div>`;
   }
   return `<div class="acc"><b>👤 ${t("acc_title")}</b><div class="sub" style="margin:4px 0 0">${t("acc_hint")}</div>
     <div class="row2"><input id="tag" placeholder="#2PP0VYJ8" maxlength="12" autocomplete="off"><button data-act="accfind">${t("acc_find")}</button></div></div>`;
+}
+
+// ---- Профиль: сила, гаджеты, пассивки, гиперзаряд, баффи, снаряжение ----
+function itemIcon(dir, id, owned, title) {
+  return `<span class="it ${owned ? "" : "off"}" title="${esc(title)}">${id ? `<img src="${CDN}/${dir}/regular/${id}.png" alt="" loading="lazy" onerror="this.replaceWith(document.createTextNode('${dir === "gadgets" ? "G" : "S"}'))">` : (dir === "gadgets" ? "G" : "S")}</span>`;
+}
+function profileCard(k) {
+  const a = ACC.b[k], it = S.items[k] || { gadgets: [], starPowers: [] };
+  const gad = it.gadgets.map(([id, nm]) => itemIcon("gadgets", id, a.gadgets.has(nm), thing(nm))).join("");
+  const sps = it.starPowers.map(([id, nm]) => itemIcon("star-powers", id, a.sps.has(nm), thing(nm))).join("");
+  const gears = (a.gearIds || []).map(id => `<span class="it gear" title="${esc(thing(S.gearById[id] || ""))}"><img src="${CDN}/gears/regular/${id}.png" alt="" loading="lazy" onerror="this.replaceWith(document.createTextNode('${esc(thing(S.gearById[id] || "?")).slice(0, 2)}'))"></span>`).join("");
+  const bf = a.buffies, nb = bf.g + bf.s + bf.h;
+  return `<div class="pc ${a.power >= 11 ? "max" : ""}">
+    <div class="pc-top"><div class="pc-ava">${imgOr(brawlerImg(k), initials(k), bname(k))}<span class="pw">${a.power}</span></div>
+      <div class="pc-name">${esc(bname(k))}</div></div>
+    <div class="pc-row">${gad}${sps}<span class="it hc ${a.hc ? "" : "off"}" title="${esc(t("hc"))}">⚡</span></div>
+    <div class="pc-row bf"><b>${t("bf")}</b><span class="${bf.g ? "on" : ""}">${t("bf_g")}</span><span class="${bf.s ? "on" : ""}">${t("bf_s")}</span><span class="${bf.h ? "on" : ""}">${t("bf_h")}</span></div>
+    ${gears ? `<div class="pc-row">${gears}</div>` : ""}</div>`;
+}
+function renderProfile() {
+  const keys = Object.keys(ACC.b);
+  const q = st.q.trim().toLowerCase().replace(/ё/g, "е");
+  const hit = q ? new Set(ALIAS.filter(([a]) => a.includes(q)).map(([, k]) => k)) : null;
+  const shown = keys.filter(k => !hit || hit.has(k)).sort((x, y) => ACC.b[y].power - ACC.b[x].power || bname(x).localeCompare(bname(y)));
+  const V = Object.values(ACC.b), sum = f => V.reduce((s, a) => s + f(a), 0);
+  const total = Object.keys(S.items).length || 108;
+  const chips = [
+    t("p_brawlers", { n: keys.length, t: total }), t("p_max", { n: V.filter(a => a.power >= 11).length }),
+    t("p_gadgets", { n: sum(a => a.gadgets.size) }), t("p_sps", { n: sum(a => a.sps.size) }),
+    t("p_hc", { n: sum(a => +a.hc) }), t("p_buffies", { n: sum(a => a.buffies.g + a.buffies.s + a.buffies.h) }),
+    t("p_gears", { n: sum(a => (a.gearIds || []).length) }),
+  ];
+  app.innerHTML = `<div class="topbar"><button class="iconbtn" data-act="back" aria-label="${t("back")}">‹</button>
+    <div class="grow"><div class="title" style="margin:0">${esc(ACC.name || t("acc_title"))}</div></div>${langBtn()}</div>
+    <div class="chips">${chips.map(c => `<span class="chip">${c}</span>`).join("")}</div>
+    <div class="search"><input id="q" type="search" placeholder="${t("search")}" value="${esc(st.q)}" autocomplete="off"></div>
+    <div class="pgrid" id="pgrid">${shown.map(profileCard).join("")}</div>`;
+  dock.hidden = true;
+  document.getElementById("q").addEventListener("input", e => { st.q = e.target.value;
+    const hh = st.q.trim() ? new Set(ALIAS.filter(([a]) => a.includes(st.q.trim().toLowerCase().replace(/ё/g, "е"))).map(([, k]) => k)) : null;
+    document.getElementById("pgrid").innerHTML = keys.filter(k => !hh || hh.has(k))
+      .sort((x, y) => ACC.b[y].power - ACC.b[x].power || bname(x).localeCompare(bname(y))).map(profileCard).join(""); });
 }
 
 function renderMy() {
@@ -819,13 +892,14 @@ document.addEventListener("click", e => {
     const link = `https://t.me/${BOT_USERNAME}?start=tag_${tag}`;
     if (tg) { tg.openTelegramLink(link); try { tg.close(); } catch (e) {} } else location.href = link;
   }
+  else if (act === "profile") { st.stage = "profile"; st.q = ""; render(); window.scrollTo(0, 0); }
   else if (act === "accforget") { ACC = null; OWNED = new Set(); cloudSet("acc", ""); cloudSet("acc_name", ""); loadOwned().then(render); }
   else if (act === "my") { st.stage = "my"; st.q = ""; render(); window.scrollTo(0, 0); }
   else if (act === "myall") { Object.keys(B).forEach(k => OWNED.add(k)); saveOwned(); render(); }
   else if (act === "mynone") { OWNED.clear(); saveOwned(); render(); }
   else if (act === "onlymine") { ONLY_MINE = !ONLY_MINE; render(); }
 });
-function goBack() { if (st.stage === "first") st.stage = "map"; else if (st.stage === "map" || st.stage === "my") st.stage = "mode"; st.q = ""; render(); }
+function goBack() { if (st.stage === "first") st.stage = "map"; else if (["map", "my", "profile"].includes(st.stage)) st.stage = "mode"; st.q = ""; render(); }
 
 (async function init() {
   document.documentElement.lang = LANG;
