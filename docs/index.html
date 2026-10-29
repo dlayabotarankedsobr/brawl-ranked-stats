@@ -1,0 +1,527 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>Brawl Draft</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@500;700;800;900&display=swap" rel="stylesheet">
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+:root {
+  --night: #1B2A6B;      /* фон — ночной синий ранкеда */
+  --panel: #24379A;      /* панели */
+  --panel-hi: #2E45B8;
+  --ink: #0E1230;        /* толстые обводки и тени, как в игре */
+  --gold: #FFC81E;       /* твой ход, главный совет */
+  --red: #FF4D5E;        /* соперники */
+  --blue: #3DB7FF;       /* вы */
+  --text: #FFFFFF;
+  --muted: #B9C3F2;
+  --r-lg: 18px; --r-md: 12px; --r-sm: 9px;
+}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { margin: 0; background: var(--night); color: var(--text);
+  font-family: Rubik, system-ui, sans-serif; font-weight: 500; font-size: 15px; line-height: 1.35; }
+body { padding: 10px 12px calc(84px + env(safe-area-inset-bottom)); min-height: 100vh;
+  background: radial-gradient(120% 60% at 50% -10%, #2B3F9E 0%, var(--night) 60%) fixed; }
+button { font: inherit; color: inherit; cursor: pointer; }
+img { display: block; }
+
+/* «игровой» текст: жирный, с тёмной тенью снизу */
+.title { font-weight: 900; font-size: 22px; letter-spacing: .2px; margin: 4px 2px 12px;
+  text-shadow: 0 2px 0 var(--ink), 0 3px 0 var(--ink); }
+.sub { color: var(--muted); font-size: 13px; margin: -6px 2px 12px; }
+
+.topbar { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+.topbar .grow { flex: 1; min-width: 0; }
+.chip { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border-radius: 999px;
+  background: var(--panel); border: 2px solid var(--ink); font-size: 12px; font-weight: 700; }
+.iconbtn { border: 2px solid var(--ink); background: var(--panel); border-radius: var(--r-sm);
+  padding: 6px 10px; font-weight: 800; box-shadow: 0 3px 0 var(--ink); }
+.iconbtn:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--ink); }
+
+/* сетки выбора режима и карты */
+.modes { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.mode { display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: var(--r-lg);
+  background: var(--panel); border: 3px solid var(--ink); box-shadow: 0 4px 0 var(--ink); text-align: left;
+  font-weight: 800; font-size: 15px; }
+.mode img { width: 44px; height: 44px; object-fit: contain; flex: none; }
+.mode:active, .mapcard:active, .big:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--ink); }
+.maps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; }
+.mapcard { border-radius: var(--r-md); overflow: hidden; background: var(--panel); border: 3px solid var(--ink);
+  box-shadow: 0 4px 0 var(--ink); padding: 0; text-align: left; }
+.mapcard img { width: 100%; aspect-ratio: 3/4; object-fit: cover; background: #16225a; }
+.mapcard span { display: block; padding: 6px 7px 7px; font-weight: 800; font-size: 12px; line-height: 1.2; }
+.mapcard.nomap { display: grid; place-items: center; min-height: 120px; font-weight: 800; padding: 10px; text-align: center; }
+
+.big { width: 100%; padding: 16px; border-radius: var(--r-lg); border: 3px solid var(--ink);
+  box-shadow: 0 5px 0 var(--ink); font-weight: 900; font-size: 18px; margin-bottom: 12px;
+  text-shadow: 0 2px 0 rgba(14,18,48,.6); }
+.big.us { background: var(--blue); } .big.them { background: var(--red); }
+
+/* доска драфта */
+.board { background: var(--panel); border: 3px solid var(--ink); border-radius: var(--r-lg);
+  padding: 10px; box-shadow: 0 4px 0 var(--ink); margin-bottom: 10px; }
+.row { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; }
+.row:last-child { margin-bottom: 0; }
+.row .lbl { width: 54px; flex: none; font-weight: 800; font-size: 12px; }
+.row.us .lbl { color: var(--blue); } .row.them .lbl { color: var(--red); } .row.bans .lbl { color: var(--muted); }
+.slot { width: 48px; height: 48px; border-radius: var(--r-sm); border: 2px dashed rgba(185,195,242,.45);
+  background: rgba(14,18,48,.35); position: relative; flex: none; overflow: hidden; }
+.row.bans .slot { width: 38px; height: 38px; }
+.slot.filled { border-style: solid; border-color: var(--ink); }
+.row.us .slot.filled { box-shadow: inset 0 0 0 2px var(--blue); }
+.row.them .slot.filled { box-shadow: inset 0 0 0 2px var(--red); }
+.row.bans .slot.filled img { filter: grayscale(1) brightness(.75); }
+.row.bans .slot.filled::after { content: ""; position: absolute; inset: 0;
+  background: linear-gradient(135deg, transparent 46%, var(--red) 46%, var(--red) 54%, transparent 54%); }
+.slot.next { border: 3px solid var(--gold); background: rgba(255,200,30,.12); animation: pulse 1.4s ease-in-out infinite; }
+@keyframes pulse { 50% { box-shadow: 0 0 0 4px rgba(255,200,30,.25); } }
+@media (prefers-reduced-motion: reduce) { .slot.next { animation: none; } }
+.slot img { width: 100%; height: 100%; object-fit: cover; }
+
+.phase { font-weight: 900; font-size: 17px; margin: 4px 2px 8px; text-shadow: 0 2px 0 var(--ink); }
+.phase.us { color: var(--gold); } .phase.them { color: var(--red); }
+.hint { color: var(--muted); font-size: 13px; margin: -4px 2px 10px; }
+
+/* советы */
+.recs { display: grid; gap: 8px; margin-bottom: 12px; }
+.rec { display: grid; grid-template-columns: 56px 1fr; gap: 10px; padding: 9px; border-radius: var(--r-md);
+  background: var(--panel-hi); border: 3px solid var(--ink); box-shadow: 0 4px 0 var(--ink); text-align: left; width: 100%; }
+.rec.top { background: var(--gold); color: var(--ink); }
+.rec.top .why, .rec.top .build { color: #3a2e00; }
+.rec:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--ink); }
+.rec .ava { width: 56px; height: 56px; border-radius: var(--r-sm); overflow: hidden; border: 2px solid var(--ink); background: #16225a; }
+.rec .ava img { width: 100%; height: 100%; object-fit: cover; }
+.rec .nm { font-weight: 900; font-size: 16px; }
+.rec .cls { font-weight: 700; font-size: 12px; opacity: .8; margin-left: 4px; }
+.rec .why { font-size: 12.5px; color: var(--muted); margin-top: 2px; }
+.rec .build { display: flex; flex-wrap: wrap; gap: 4px 10px; margin-top: 6px; font-size: 12px; font-weight: 700; color: var(--text); }
+.rec .build span { display: inline-flex; align-items: center; gap: 4px; }
+.rec .build img { width: 20px; height: 20px; object-fit: contain; }
+.sect { font-weight: 800; font-size: 13px; color: var(--muted); margin: 6px 2px 6px; }
+
+/* сетка бойцов */
+.search { display: flex; gap: 8px; margin: 4px 0 10px; position: sticky; top: 0; z-index: 2;
+  padding: 6px 0; background: var(--night); }
+.search input { flex: 1; min-width: 0; padding: 11px 12px; border-radius: var(--r-md); border: 3px solid var(--ink);
+  background: #fff; color: var(--ink); font: inherit; font-weight: 700; outline: none; }
+.search input:focus-visible { border-color: var(--gold); }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(62px, 1fr)); gap: 7px; }
+.br { padding: 0; border-radius: var(--r-sm); border: 2px solid var(--ink); background: var(--panel); overflow: hidden; position: relative; }
+.br img, .br .ph { width: 100%; aspect-ratio: 1; object-fit: cover; background: #16225a; }
+.br .ph { display: grid; place-items: center; font-weight: 900; font-size: 20px; color: var(--muted); }
+.br span { display: block; font-size: 10.5px; font-weight: 700; padding: 3px 2px 4px; text-align: center;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.br:disabled { opacity: .28; }
+.br:not(:disabled):active { transform: scale(.94); }
+.br:focus-visible, .mode:focus-visible, .mapcard:focus-visible, .rec:focus-visible, .big:focus-visible, .iconbtn:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+
+.dock { position: fixed; left: 0; right: 0; bottom: 0; display: flex; gap: 8px;
+  padding: 10px 12px calc(10px + env(safe-area-inset-bottom)); background: rgba(14,18,48,.92); backdrop-filter: blur(6px); }
+.dock button { flex: 1; padding: 12px; border-radius: var(--r-md); border: 2px solid var(--ink); font-weight: 800;
+  background: var(--panel); box-shadow: 0 3px 0 #000; }
+.dock button.primary { background: var(--gold); color: var(--ink); }
+.dock button:disabled { opacity: .4; }
+.empty { text-align: center; color: var(--muted); padding: 30px 10px; }
+.done { text-align: center; font-weight: 900; font-size: 20px; margin: 14px 0; text-shadow: 0 2px 0 var(--ink); }
+</style>
+</head>
+<body>
+<div id="app"><div class="empty">…</div></div>
+<div class="dock" id="dock" hidden></div>
+
+<script>
+"use strict";
+// ================= настройки =================
+const STATS_URL = new URLSearchParams(location.search).get("stats")
+  || "https://raw.githubusercontent.com/dlayabotarankedsobr/brawl-ranked-stats/state/data/stats.json";
+const CDN = "https://cdn.brawlify.com";
+const K_SHRINK = 100, META_MIN_GAMES = 60, META_MIN_PICK = 0.03, MIN_PAIR_GAMES = 40,
+      OPEN_MAP = 0.30, CLOSED_MAP = 0.12, MIN_BRAWLER_MAP_GAMES = 30, MIN_MODE_GAMES = 30,
+      MIN_MAP_GAMES = 150, Z = 1.64, SPLIT = 0.6, MIN_BUILD = 20, MAX_BANS = 6;
+const MODE_ORDER = ["gem", "ball", "knockout", "hotzone", "heist", "bounty"];
+const tg = window.Telegram ? window.Telegram.WebApp : null;
+
+// ================= тексты =================
+const T = {
+  ru: {
+    loading: "Загружаю статистику…", load_err: "Не удалось загрузить статистику. Проверь интернет и открой приложение заново.",
+    choose_mode: "Выбери режим", choose_map: "Выбери карту", no_map: "Без карты, только режим",
+    who_first: "Кто пикает первым?", we_first: "Мы первые", they_first: "Соперники первые",
+    bans_phase: "Баны: отметь забаненных", bans_hint: "Тапни бойцов, которых забанили обе команды ({n} из 6).",
+    bans_done: "Готово с банами", enemy_turn: "Ход соперников: кого взяли? ({n})", your_turn: "Твой ход: возьми {n}",
+    enemy_hint: "Тапни бойца, которого взяли соперники.", your_hint: "Тапни совет или любого бойца, которого вы взяли.",
+    pair: "Советую пару", then: "Если взяли {name}, к нему:", niche: "Нишевый вариант — берут редко",
+    search: "Поиск бойца", undo: "Отменить", new: "Новый драфт", us: "Вы", them: "Враги", bans: "Баны",
+    done: "Драфт готов. Удачи в игре!", stats: "{games} игр Легенда+ · обновлено {upd}",
+    open: "Открытая карта · дальних пиков {p}%", closed: "Закрытая карта · дальних пиков {p}%", mid: "Средняя карта · дальних пиков {p}%",
+    ban_sugg: "Чаще всего стоит банить", nothing: "Не нашёл подходящих бойцов",
+    w_counters: "контрит {l}", w_loses: "проигрывает {l}", w_synergy: "хорошо с {l}", w_pro: "берут про-игроки",
+    w_meta: "часто берут и выигрывают на этой карте", w_rare: "сильный, но редкий выбор",
+    c_second_tank: "второй танк", c_all_close: "вся команда ближнего боя", c_open_close: "карта открытая, ближнему бою тяжело",
+    c_need_long: "нужен дальний боец", c_no_long: "в команде не будет дальнего бойца", c_closed_long: "карта закрытая, дальнему тесно",
+    back: "Назад",
+  },
+  en: {
+    loading: "Loading stats…", load_err: "Couldn't load stats. Check your connection and reopen the app.",
+    choose_mode: "Choose a mode", choose_map: "Choose a map", no_map: "No map, mode only",
+    who_first: "Who picks first?", we_first: "We pick first", they_first: "Enemies pick first",
+    bans_phase: "Bans: mark banned brawlers", bans_hint: "Tap the brawlers banned by both teams ({n} of 6).",
+    bans_done: "Done with bans", enemy_turn: "Enemy turn: who did they pick? ({n})", your_turn: "Your turn: pick {n}",
+    enemy_hint: "Tap the brawler the enemies picked.", your_hint: "Tap a suggestion or any brawler you picked.",
+    pair: "Suggested pair", then: "If you took {name}, add:", niche: "Niche option — rarely picked",
+    search: "Search brawler", undo: "Undo", new: "New draft", us: "Us", them: "Enemy", bans: "Bans",
+    done: "Draft complete. Good luck!", stats: "{games} Legendary+ games · updated {upd}",
+    open: "Open map · {p}% long-range picks", closed: "Closed map · {p}% long-range picks", mid: "Medium map · {p}% long-range picks",
+    ban_sugg: "Best bans here", nothing: "No suitable brawlers found",
+    w_counters: "counters {l}", w_loses: "loses to {l}", w_synergy: "good with {l}", w_pro: "picked by pros",
+    w_meta: "often picked and winning on this map", w_rare: "strong but rare pick",
+    c_second_tank: "second tank", c_all_close: "whole team is close-range", c_open_close: "open map, hard for close-range",
+    c_need_long: "team needs long range", c_no_long: "team will have no long range", c_closed_long: "closed map, cramped for long range",
+    back: "Back",
+  },
+};
+function params() { return new URLSearchParams(location.search); }
+let LANG = params().get("lang") || safeGet("lang") ||
+  ((tg && tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.language_code || "ru").startsWith("ru") ? "ru" : "en");
+function safeGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+function safeSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+function t(key, kw) { let s = (T[LANG] && T[LANG][key]) || T.ru[key] || key;
+  for (const k in (kw || {})) s = s.replace("{" + k + "}", kw[k]); return s; }
+
+// ================= данные =================
+let D = null;            // app-data.json
+const B = {};            // ключ -> боец
+const API2K = {};        // имя из API -> ключ
+const ALIAS = [];        // [строка, ключ] для поиска
+const S = { maps: {}, mapB: {}, proB: {}, modeB: {}, vs: {}, wt: {}, builds: {}, ids: {}, raw: null };
+
+function keyFromApi(api) {
+  if (API2K[api]) return API2K[api];
+  const k = api.toLowerCase().replace(/[^a-z0-9]+/g, "_");
+  const nice = api.charAt(0) + api.slice(1).toLowerCase();
+  B[k] = { k, api, ru: nice, en: nice, cls: "unknown", rng: null, al: [api.toLowerCase()] };
+  API2K[api] = k; ALIAS.push([api.toLowerCase(), k]);
+  return k;
+}
+function conv(obj) { const o = {}; for (const n in obj) { const k = keyFromApi(n);
+  const c = o[k] || (o[k] = [0, 0]); c[0] += obj[n][0]; c[1] += obj[n][1]; } return o; }
+function convPairs(obj) { const o = {}; for (const p in obj) { const [a, b] = p.split("|");
+  o[keyFromApi(a) + "|" + keyFromApi(b)] = obj[p]; } return o; }
+function modeKey(m) { return D.api_mode[m] || m; }
+
+async function load() {
+  const [d, raw] = await Promise.all([
+    fetch("app-data.json").then(r => r.json()),
+    fetch(STATS_URL + (STATS_URL.includes("?") ? "&" : "?") + "t=" + Math.floor(Date.now() / 600000)).then(r => r.json()),
+  ]);
+  D = d;
+  for (const b of D.brawlers) { B[b.k] = b; API2K[b.api] = b.k;
+    for (const a of b.al.concat([b.ru.toLowerCase(), b.en.toLowerCase()])) ALIAS.push([a.replace(/ё/g, "е"), b.k]); }
+  S.raw = raw;
+  for (const m in raw.maps) { const v = raw.maps[m];
+    S.maps[m] = { mode: modeKey(v.mode), games: v.games, recent: v.recent_games, id: v.id }; }
+  for (const m in raw.brawlers) S.mapB[m] = conv(raw.brawlers[m]);
+  for (const m in (raw.pro || {})) S.proB[m] = conv(raw.pro[m]);
+  for (const m in raw.mode_brawlers) S.modeB[modeKey(m)] = conv(raw.mode_brawlers[m]);
+  for (const m in raw.vs) S.vs[modeKey(m)] = convPairs(raw.vs[m]);
+  for (const m in raw.with) S.wt[modeKey(m)] = convPairs(raw.with[m]);
+  for (const n in (raw.builds || {})) S.builds[keyFromApi(n)] = raw.builds[n];
+  for (const n in (raw.brawler_list || {})) if (raw.brawler_list[n].id) S.ids[keyFromApi(n)] = raw.brawler_list[n].id;
+}
+
+// ================= названия и картинки =================
+function bname(k) { return B[k] ? B[k][LANG] : k; }
+function thing(api) { if (!api) return api;
+  if (LANG === "ru" && D.names_ru[api.toUpperCase()]) return D.names_ru[api.toUpperCase()];
+  return /[a-z]/.test(api) ? api : api.toLowerCase().replace(/\b\w/g, c => c.toUpperCase()); }
+function modeName(m) { return D.modes[m] ? D.modes[m][LANG] : m; }
+function roleName(c) { return (D.roles[LANG] || {})[c] || ""; }
+function brawlerImg(k) { return S.ids[k] ? `${CDN}/brawlers/borderless/${S.ids[k]}.png` : ""; }
+function initials(k) { return bname(k).slice(0, 2); }
+function imgOr(src, fallbackText, alt) {
+  if (!src) return `<div class="ph" aria-hidden="true">${esc(fallbackText)}</div>`;
+  return `<img src="${src}" alt="${esc(alt || "")}" loading="lazy" onerror="this.outerHTML='<div class=&quot;ph&quot;>${esc(fallbackText)}</div>'">`;
+}
+function esc(s) { return String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])); }
+
+// ================= движок советов (тот же, что в боте) =================
+function sumG(tab) { let s = 0; for (const k in tab) s += tab[k][0]; return s; }
+function wilson(w, g) { if (!g) return [0, 1]; const p = w / g, den = 1 + Z * Z / g,
+  c = p + Z * Z / (2 * g), m = Z * Math.sqrt(p * (1 - p) / g + Z * Z / (4 * g * g)); return [(c - m) / den, (c + m) / den]; }
+function safeDelta(w, g) { const [lo, hi] = wilson(w, g); return lo > .5 ? lo - .5 : hi < .5 ? hi - .5 : 0; }
+function hasMap(map, mode) {
+  if (map && S.maps[map] && S.maps[map].games >= MIN_MAP_GAMES) return true;
+  return sumG(S.modeB[mode] || {}) / 6 >= MIN_MAP_GAMES * 3;
+}
+function openness(map, mode) {
+  const tab = (map && S.mapB[map]) || S.modeB[mode] || {}; let tot = 0, lg = 0;
+  for (const k in tab) { const r = B[k] && B[k].rng; if (r) { tot += tab[k][0]; if (r === "long") lg += tab[k][0]; } }
+  return tot ? lg / tot : .2;
+}
+function brawlerScore(c, map, mode) {
+  const mt = S.modeB[mode] || {}; const [gm, wm] = mt[c] || [0, 0];
+  if (gm < MIN_MODE_GAMES) return null;
+  const mb = map ? (S.mapB[map] || {}) : {}; let [g, w] = mb[c] || [0, 0];
+  let where, pick, meta;
+  if (Object.keys(mb).length && sumG(mb) / 6 >= MIN_MAP_GAMES) {
+    const total = sumG(mb) / 6; pick = g / total; meta = g >= META_MIN_GAMES && pick >= META_MIN_PICK;
+    if (g < MIN_BRAWLER_MAP_GAMES) { g = gm; w = wm; }
+  } else { const total = sumG(mt) / 6; g = gm; w = wm; pick = g / Math.max(total, 1);
+    meta = g >= META_MIN_GAMES * 2 && pick >= META_MIN_PICK; }
+  const adj = (w + K_SHRINK * .5) / (g + K_SHRINK);
+  const pb = map ? (S.proB[map] || {}) : {}; const proTotal = sumG(pb) / 6;
+  const pro = proTotal >= 20 ? ((pb[c] || [0])[0]) / proTotal : 0;
+  return { wr: w / g, adj, games: g, pick, pro, meta };
+}
+function pairDelta(tab, a, b) { const [g, w] = tab[a + "|" + b] || [0, 0];
+  return g < MIN_PAIR_GAMES ? 0 : safeDelta(w, g); }
+function composition(c, allies, open) {
+  const r = B[c] && B[c].rng; if (!r) return [0, []];
+  const rs = allies.map(a => B[a] && B[a].rng); const slotsAfter = 3 - allies.length - 1;
+  let pts = 0; const notes = [];
+  if (r === "tank" && rs.includes("tank")) { pts -= 8; notes.push("c_second_tank"); }
+  const close = rs.filter(x => x === "short" || x === "tank").length + ((r === "short" || r === "tank") ? 1 : 0);
+  if (close >= 3) { pts -= 6; notes.push("c_all_close"); }
+  if (open >= OPEN_MAP) { const k = open / .45;
+    if (r === "short" || r === "tank") { pts -= 6 * k; notes.push("c_open_close"); }
+    if (!rs.includes("long")) {
+      if (r === "long") { pts += 4 * k; notes.push("c_need_long"); }
+      else if (slotsAfter === 0) { pts -= 10 * k; notes.push("c_no_long"); } }
+  } else if (open <= CLOSED_MAP && r === "long") { pts -= 3; notes.push("c_closed_long"); }
+  return [pts, notes];
+}
+function scoreOf(c, d, bs, open) {
+  const vs = S.vs[d.mode] || {}, wt = S.wt[d.mode] || {};
+  let score = (bs.adj - .5) * 100 + 1.5 * Math.log1p(bs.pick * 100) + bs.pro * 30;
+  const why = [], good = [], bad = [], syn = [];
+  if (bs.pro >= .05) why.push(["w_pro"]);
+  for (const e of d.enemy) { const dl = pairDelta(vs, c, e); score += dl * 80; if (dl > 0) good.push(e); else if (dl < 0) bad.push(e); }
+  for (const a of d.ally) { const [x, y] = [a, c].sort(); const dl = pairDelta(wt, x, y); score += dl * 50; if (dl > 0) syn.push(a); }
+  const [cp, notes] = composition(c, d.ally, open); score += cp;
+  if (good.length) why.push(["w_counters", good]); if (bad.length) why.push(["w_loses", bad]);
+  if (syn.length) why.push(["w_synergy", syn]);
+  for (const n of notes) why.push(["comp", n, cp > 0]);
+  if (!why.length) why.push([bs.meta ? "w_meta" : "w_rare"]);
+  return { score, why };
+}
+function ranked(d, wantMeta) {
+  if (!d.mode || !hasMap(d.map, d.mode)) return [];
+  const taken = new Set([...d.bans, ...d.enemy, ...d.ally]); const open = openness(d.map, d.mode); const res = [];
+  for (const c in (S.modeB[d.mode] || {})) { if (taken.has(c)) continue;
+    const bs = brawlerScore(c, d.map, d.mode); if (!bs || bs.meta !== wantMeta) continue;
+    const { score, why } = scoreOf(c, d, bs, open); res.push({ c, score, why }); }
+  return res.sort((a, b) => b.score - a.score);
+}
+function recommend(d, top) { return ranked(d, true).slice(0, top || 3); }
+function niche(d) { const res = ranked(d, false); const best = recommend(d, 1);
+  const bar = best.length ? best[0].score : 0; return res.slice(0, 1).filter(r => r.score > bar - 3); }
+function banCandidates(map, mode, exclude) {
+  if (!hasMap(map, mode)) return []; const out = [];
+  for (const c in (S.modeB[mode] || {})) { if (exclude.has(c)) continue; const bs = brawlerScore(c, map, mode);
+    if (bs && bs.meta) out.push([(bs.adj - .5) * 100 + 2 * Math.log1p(bs.pick * 100) + bs.pro * 20, c]); }
+  return out.sort((a, b) => b[0] - a[0]).slice(0, 5).map(x => x[1]);
+}
+function build(c) {
+  const b = S.builds[c]; if (!b || (b.n || 0) < MIN_BUILD) return null; const res = { n: Math.round(b.n) };
+  for (const kind of ["gadget", "sp"]) {
+    const only = b[kind + "_only"] || {}, nOnly = b["n_" + kind + "_only"] || 0;
+    const top = Object.entries(only).sort((x, y) => y[1] - x[1]);
+    if (nOnly >= MIN_BUILD / 2 && top.length) {
+      res[kind] = (top[0][1] / nOnly < SPLIT && top.length > 1) ? [top[0][0], top[1][0]] : [top[0][0]];
+    } else if (b[kind + "_own"]) { const own = Object.entries(b[kind + "_own"]).sort((x, y) => y[1] - x[1]);
+      if (own.length) res[kind] = [own[0][0]]; }
+  }
+  if (b.n_gear) res.gears = Object.entries(b.gear || {}).sort((x, y) => y[1] - x[1]).slice(0, 2).map(x => x[0]);
+  res.ids = b.ids || {};
+  return res;
+}
+
+// ================= состояние драфта =================
+const US = "us", THEM = "them";
+let st = { stage: "mode", mode: null, map: null, first: null, bans: [], ally: [], enemy: [], step: 0, got: 0, hist: [], q: "" };
+function order(first) { const second = first === US ? THEM : US; return [[first, 1], [second, 2], [first, 2], [second, 1]]; }
+function current() { const o = order(st.first); if (st.step >= o.length) return null; return [o[st.step][0], o[st.step][1] - st.got]; }
+function snap() { st.hist.push(JSON.stringify({ ...st, hist: [] })); if (st.hist.length > 40) st.hist.shift(); }
+function undo() { if (!st.hist.length) return; const h = st.hist; const prev = JSON.parse(h.pop()); st = { ...prev, hist: h, q: "" }; haptic("light"); render(); }
+function taken() { return new Set([...st.bans, ...st.ally, ...st.enemy]); }
+function dd() { return { map: st.map, mode: st.mode, bans: st.bans, ally: st.ally, enemy: st.enemy }; }
+function haptic(kind) { try { tg && tg.HapticFeedback && tg.HapticFeedback.impactOccurred(kind); } catch (e) {} }
+
+function tapBrawler(k) {
+  if (taken().has(k)) return;
+  if (st.stage === "bans") { snap(); st.bans.push(k); if (st.bans.length >= MAX_BANS) st.stage = "picks"; }
+  else if (st.stage === "picks") { const cur = current(); if (!cur) return; snap();
+    (cur[0] === US ? st.ally : st.enemy).push(k); st.got++;
+    if (st.got >= order(st.first)[st.step][1]) { st.step++; st.got = 0; }
+    if (!current()) st.stage = "done"; }
+  st.q = ""; haptic("medium"); render(); window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+// ================= отрисовка =================
+const app = document.getElementById("app"), dock = document.getElementById("dock");
+function langBtn() { return `<button class="iconbtn" data-act="lang" aria-label="Language">${LANG === "ru" ? "EN" : "RU"}</button>`; }
+
+function render() {
+  if (tg) { tg.BackButton[st.stage === "map" || st.stage === "first" ? "show" : "hide"](); }
+  if (st.stage === "mode") return renderModes();
+  if (st.stage === "map") return renderMaps();
+  if (st.stage === "first") return renderFirst();
+  return renderDraft();
+}
+
+function renderModes() {
+  dock.hidden = true;
+  const live = new Set(Object.values(S.maps).map(m => m.mode));
+  const modes = MODE_ORDER.filter(m => live.has(m) || D.modes[m]);
+  const upd = S.raw ? t("stats", { games: S.raw.games.toLocaleString(LANG), upd: S.raw.updated.slice(0, 10) }) : "";
+  app.innerHTML = `<div class="topbar"><div class="grow"><div class="title">${t("choose_mode")}</div><div class="sub">${upd}</div></div>${langBtn()}</div>
+    <div class="modes">${modes.map(m => `<button class="mode" data-mode="${m}">
+      <img src="${CDN}/game-modes/regular/${D.modes[m].id}.png" alt="" onerror="this.style.visibility='hidden'">${esc(modeName(m))}</button>`).join("")}</div>`;
+}
+
+function renderMaps() {
+  dock.hidden = true;
+  const maps = Object.entries(S.maps).filter(([, v]) => v.mode === st.mode && v.recent >= 30)
+    .sort((a, b) => b[1].recent - a[1].recent);
+  app.innerHTML = `<div class="topbar"><button class="iconbtn" data-act="back" aria-label="${t("back")}">‹</button>
+    <div class="grow"><div class="title" style="margin:0">${esc(modeName(st.mode))}</div></div>${langBtn()}</div>
+    <div class="sub" style="margin:2px 2px 10px">${t("choose_map")}</div>
+    <div class="maps">${maps.map(([m, v]) => `<button class="mapcard" data-map="${esc(m)}">
+      ${v.id ? `<img src="${CDN}/maps/regular/${v.id}.png" alt="" loading="lazy" onerror="this.remove()">` : ""}
+      <span>${esc(thing(m))}</span></button>`).join("")}
+      <button class="mapcard nomap" data-map="">${t("no_map")}</button></div>`;
+}
+
+function renderFirst() {
+  dock.hidden = true;
+  app.innerHTML = `<div class="topbar"><button class="iconbtn" data-act="back" aria-label="${t("back")}">‹</button>
+    <div class="grow"><div class="title" style="margin:0">${esc(st.map ? thing(st.map) : modeName(st.mode))}</div></div>${langBtn()}</div>
+    ${mapLabel()}<div class="title" style="margin-top:18px">${t("who_first")}</div>
+    <button class="big us" data-first="us">${t("we_first")}</button>
+    <button class="big them" data-first="them">${t("they_first")}</button>`;
+}
+
+function mapLabel() {
+  if (!hasMap(st.map, st.mode)) return "";
+  const o = openness(st.map, st.mode), p = Math.round(o * 100);
+  const key = o >= OPEN_MAP ? "open" : o <= CLOSED_MAP ? "closed" : "mid";
+  return `<span class="chip">🧭 ${t(key, { p })}</span>`;
+}
+
+function slots(list, n, cls, nextIdx) {
+  let h = "";
+  for (let i = 0; i < n; i++) { const k = list[i];
+    h += `<div class="slot ${k ? "filled" : ""} ${i === nextIdx ? "next" : ""}">${k ? imgOr(brawlerImg(k), initials(k), bname(k)) : ""}</div>`; }
+  return `<div class="row ${cls}"><div class="lbl">${t(cls)}</div>${h}</div>`;
+}
+
+function whyText(w) {
+  const names = l => l.map(bname).join(", ");
+  if (w[0] === "comp") return (w[2] ? "👍 " : "⚠️ ") + t(w[1]);
+  if (w[0] === "w_counters" || w[0] === "w_loses" || w[0] === "w_synergy") return t(w[0], { l: names(w[1]) });
+  return t(w[0]);
+}
+
+function buildHtml(c) {
+  const b = build(c); if (!b) return "";
+  const icon = (dir, name) => b.ids[name] ? `<img src="${CDN}/${dir}/regular/${b.ids[name]}.png" alt="" loading="lazy" onerror="this.remove()">` : "";
+  const parts = [];
+  if (b.gadget) parts.push(`<span>${b.gadget.map(x => icon("gadgets", x) + esc(thing(x))).join(" / ")}</span>`);
+  if (b.sp) parts.push(`<span>${b.sp.map(x => icon("star-powers", x) + esc(thing(x))).join(" / ")}</span>`);
+  if (b.gears) parts.push(`<span>${b.gears.map(x => icon("gears", x) + esc(thing(x))).join(" + ")}</span>`);
+  return `<div class="build">${parts.join("")}</div>`;
+}
+
+function recCard(r, top) {
+  const role = roleName(B[r.c] ? B[r.c].cls : "");
+  return `<button class="rec ${top ? "top" : ""}" data-k="${r.c}">
+    <div class="ava">${imgOr(brawlerImg(r.c), initials(r.c), bname(r.c))}</div>
+    <div><div class="nm">${esc(bname(r.c))}${role ? `<span class="cls">${esc(role)}</span>` : ""}</div>
+    <div class="why">${r.why.map(whyText).map(esc).join(" · ")}</div>${buildHtml(r.c)}</div></button>`;
+}
+
+function renderDraft() {
+  const cur = st.stage === "picks" ? current() : null;
+  // индекс следующего слота для подсветки
+  let nextBan = st.stage === "bans" ? st.bans.length : -1, nextUs = -1, nextThem = -1;
+  if (cur) { if (cur[0] === US) nextUs = st.ally.length; else nextThem = st.enemy.length; }
+  let phase = "", hint = "", recs = "";
+  if (st.stage === "bans") {
+    phase = `<div class="phase">${t("bans_phase")}</div>`; hint = `<div class="hint">${t("bans_hint", { n: st.bans.length })}</div>`;
+    const bc = banCandidates(st.map, st.mode, taken());
+    if (bc.length) recs = `<div class="sect">${t("ban_sugg")}</div><div class="grid" style="margin-bottom:12px">${bc.map(gridItem).join("")}</div>`;
+  } else if (cur && cur[0] === THEM) {
+    phase = `<div class="phase them">${t("enemy_turn", { n: cur[1] })}</div>`; hint = `<div class="hint">${t("enemy_hint")}</div>`;
+  } else if (cur && cur[0] === US) {
+    phase = `<div class="phase us">${t("your_turn", { n: cur[1] })}</div>`; hint = `<div class="hint">${t("your_hint")}</div>`;
+    const d = dd(); const first = recommend(d, 3);
+    if (!first.length) recs = `<div class="empty">${t("nothing")}</div>`;
+    else if (cur[1] === 1) recs = `<div class="recs">${first.map((r, i) => recCard(r, i === 0)).join("")}</div>`;
+    else { const second = recommend({ ...d, ally: d.ally.concat([first[0].c]) }, 2);
+      recs = `<div class="sect">${t("pair")}: ${esc(bname(first[0].c))}${second[0] ? " + " + esc(bname(second[0].c)) : ""}</div>
+        <div class="recs">${first.map((r, i) => recCard(r, i === 0)).join("")}</div>
+        ${second.length ? `<div class="sect">${t("then", { name: esc(bname(first[0].c)) })}</div><div class="recs">${second.map(r => recCard(r, false)).join("")}</div>` : ""}`; }
+    const ni = niche(d); if (ni.length) recs += `<div class="sect">🧪 ${t("niche")}</div><div class="recs">${ni.map(r => recCard(r, false)).join("")}</div>`;
+  } else if (st.stage === "done") {
+    phase = `<div class="done">🏁 ${t("done")}</div>`;
+  }
+  const title = st.map ? thing(st.map) : modeName(st.mode);
+  app.innerHTML = `<div class="topbar"><img src="${CDN}/game-modes/regular/${D.modes[st.mode].id}.png" alt="" width="34" height="34" style="object-fit:contain" onerror="this.style.visibility='hidden'">
+      <div class="grow"><div class="title" style="margin:0;font-size:19px">${esc(title)}</div>${mapLabel()}</div>${langBtn()}</div>
+    <div class="board">${slots(st.bans, MAX_BANS, "bans", nextBan)}${slots(st.ally, 3, "us", nextUs)}${slots(st.enemy, 3, "them", nextThem)}</div>
+    ${phase}${hint}${recs}
+    ${st.stage === "done" ? "" : `<div class="search"><input id="q" type="search" placeholder="${t("search")}" value="${esc(st.q)}" autocomplete="off"></div>
+    <div class="grid" id="grid">${gridHtml()}</div>`}`;
+  dock.hidden = false;
+  dock.innerHTML = `<button data-act="undo" ${st.hist.length ? "" : "disabled"}>↩️ ${t("undo")}</button>
+    ${st.stage === "bans" && st.bans.length ? `<button class="primary" data-act="bansdone">${t("bans_done")}</button>` : ""}
+    <button data-act="new">🆕 ${t("new")}</button>`;
+  const q = document.getElementById("q");
+  if (q) q.addEventListener("input", e => { st.q = e.target.value; document.getElementById("grid").innerHTML = gridHtml(); });
+}
+
+function gridItem(k) {
+  const off = taken().has(k);
+  return `<button class="br" data-k="${k}" ${off ? "disabled" : ""}>${imgOr(brawlerImg(k), initials(k), bname(k))}<span>${esc(bname(k))}</span></button>`;
+}
+function gridHtml() {
+  // порядок: сначала популярные на этой карте, потом остальные по алфавиту
+  const tab = (st.map && S.mapB[st.map]) || S.modeB[st.mode] || {};
+  let keys = Object.keys(B);
+  const q = st.q.trim().toLowerCase().replace(/ё/g, "е");
+  if (q) { const hit = new Set(ALIAS.filter(([a]) => a.includes(q)).map(([, k]) => k)); keys = keys.filter(k => hit.has(k)); }
+  keys.sort((a, b) => ((tab[b] || [0])[0] - (tab[a] || [0])[0]) || bname(a).localeCompare(bname(b)));
+  return keys.map(gridItem).join("") || `<div class="empty">—</div>`;
+}
+
+// ================= события =================
+document.addEventListener("click", e => {
+  const el = e.target.closest("button"); if (!el || el.disabled) return;
+  if (el.dataset.mode) { st.mode = el.dataset.mode; st.stage = "map"; haptic("light"); render(); window.scrollTo(0, 0); return; }
+  if (el.dataset.map !== undefined) { st.map = el.dataset.map || null; st.stage = "first"; haptic("light"); render(); window.scrollTo(0, 0); return; }
+  if (el.dataset.first) { snap(); st.first = el.dataset.first; st.stage = "bans"; haptic("light"); render(); return; }
+  if (el.dataset.k) { tapBrawler(el.dataset.k); return; }
+  const act = el.dataset.act;
+  if (act === "undo") undo();
+  else if (act === "new") { st = { stage: "mode", mode: null, map: null, first: null, bans: [], ally: [], enemy: [], step: 0, got: 0, hist: [], q: "" }; render(); }
+  else if (act === "bansdone") { snap(); st.stage = "picks"; haptic("light"); render(); }
+  else if (act === "lang") { LANG = LANG === "ru" ? "en" : "ru"; safeSet("lang", LANG); document.documentElement.lang = LANG; render(); }
+  else if (act === "back") goBack();
+});
+function goBack() { if (st.stage === "first") st.stage = "map"; else if (st.stage === "map") st.stage = "mode"; render(); }
+
+(async function init() {
+  document.documentElement.lang = LANG;
+  if (tg) { tg.ready(); tg.expand(); try { tg.setHeaderColor("#1B2A6B"); tg.setBackgroundColor("#1B2A6B"); } catch (e) {}
+    tg.BackButton.onClick(goBack); }
+  app.innerHTML = `<div class="empty">${t("loading")}</div>`;
+  try { await load(); } catch (e) { app.innerHTML = `<div class="empty">${t("load_err")}</div>`; console.error(e); return; }
+  render();
+})();
+</script>
+</body>
+</html>
