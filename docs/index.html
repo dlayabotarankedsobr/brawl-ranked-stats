@@ -245,7 +245,7 @@ const T = {
     g_vision: "кустов {p}% — «Зрение», чтобы враг не прятался в кустах",
     g_vision_enemy: "кустов {p}% и у врага ближний бой — «Зрение» против засад",
     acc_title: "Мой аккаунт", acc_hint: "Введи тег — учту силу бойцов, гаджеты, пассивки и снаряжение. Бот пришлёт ссылку.",
-    acc_find: "Найти", acc_forget: "Убрать", acc_open: "Профиль", acc_loading: "Ищу…", acc_notfound: "Игрок не найден. Проверь тег.", img_sent: "Картинка отправлена в чат с ботом ✅", img_wait: "Рисую…",
+    acc_find: "Найти", acc_forget: "Убрать", acc_open: "Профиль", acc_loading: "Ищу…", acc_notfound: "Игрок не найден. Проверь тег.", img_sent: "Картинка отправлена в чат с ботом ✅", img_wait: "Рисую…", api_down: "Сервер Brawl Stars сейчас не отвечает. Попробуй ещё раз через минуту.",
     m_trophies: "Кубки", m_best: "Рекорд кубков", m_ranked: "Ранкед сейчас", m_best_ranked: "Лучший ранкед", m_level: "Уровень",
     m_img: "Картинка профиля в чат",
     hc: "Гиперзаряд", bf: "Баффи", bf_g: "гаджет", bf_s: "пасс.", bf_h: "гипер",
@@ -297,7 +297,7 @@ const T = {
     g_vision: "{p}% bushes — Vision so enemies can't hide in bushes",
     g_vision_enemy: "{p}% bushes and enemy close-range — Vision against ambushes",
     acc_title: "My account", acc_hint: "Enter your tag — I'll account for power levels, gadgets, star powers and gears. The bot will send a link.",
-    acc_find: "Find", acc_forget: "Remove", acc_open: "Profile", acc_loading: "Searching…", acc_notfound: "Player not found. Check the tag.", img_sent: "Image sent to the bot chat ✅", img_wait: "Drawing…",
+    acc_find: "Find", acc_forget: "Remove", acc_open: "Profile", acc_loading: "Searching…", acc_notfound: "Player not found. Check the tag.", img_sent: "Image sent to the bot chat ✅", img_wait: "Drawing…", api_down: "Brawl Stars server is not responding. Try again in a minute.",
     m_trophies: "Trophies", m_best: "Highest trophies", m_ranked: "Ranked now", m_best_ranked: "Best ranked", m_level: "Level",
     m_img: "Profile image to chat",
     hc: "Hypercharge", bf: "Buffies", bf_g: "gadget", bf_s: "star", bf_h: "hyper",
@@ -947,6 +947,7 @@ document.addEventListener("click", e => {
     el.disabled = true; el.textContent = t("acc_loading");
     apiFetch(`/api/profile?tag=${tag}`).then(async r => {
       if (r.status === 404) { toast(t("acc_notfound")); return; }
+      if (r.status === 502) { toast(t("api_down")); return; }   // бот на связи, но не ответил сервер игры — в чат не уходим
       if (!r.ok) throw new Error(r.status);
       const d = await r.json(); await applyAccount(d.acc, d.name, d.meta);
       haptic("medium"); st.stage = "profile"; st.q = ""; window.scrollTo(0, 0);
@@ -958,7 +959,8 @@ document.addEventListener("click", e => {
     const txt = el.textContent; el.disabled = true; el.textContent = "🖼 " + t("img_wait");
     apiFetch("/api/card", { method: "POST", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ tag: ACC_META.tag, lang: LANG }) })
-      .then(r => { if (!r.ok) throw new Error(r.status); haptic("medium"); toast(t("img_sent")); })
+      .then(r => { if (r.status === 502) { toast(t("api_down")); return; }
+        if (!r.ok) throw new Error(r.status); haptic("medium"); toast(t("img_sent")); })
       .catch(() => openBot(`img_${ACC_META.tag}`))
       .finally(() => { el.disabled = false; el.textContent = txt; });
   }
