@@ -10,7 +10,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 DAILY = ROOT / "data" / "daily"
 OUT = ROOT / "data" / "stats.json"
-WINDOW_DAYS = int(os.getenv("WINDOW_DAYS", "21"))
+WINDOW_DAYS = int(os.getenv("WINDOW_DAYS", "10"))   # статистика только за последние 10 дней (включая сегодня)
 RECENT_DAYS = 7
 MIN_PAIR_GAMES = 8   # пары/контры с меньшим числом игр не сохраняем
 
@@ -24,7 +24,7 @@ def add(dst, src):
 
 def main():
     now = datetime.now(timezone.utc)
-    start = (now - timedelta(days=WINDOW_DAYS)).strftime("%Y-%m-%d")
+    start = (now - timedelta(days=WINDOW_DAYS - 1)).strftime("%Y-%m-%d")
     recent = (now - timedelta(days=RECENT_DAYS)).strftime("%Y-%m-%d")
     out = {"updated": now.strftime("%Y-%m-%d %H:%M UTC"), "window_days": WINDOW_DAYS,
            "games": 0, "pro_games": 0, "maps": {}, "brawlers": {}, "pro": {},

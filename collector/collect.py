@@ -45,7 +45,7 @@ PROFILED_FILE = DATA / "profiled.json"
 SAMPLE_FILE = DATA / "profile_sample.json"   # образец профиля игрока из API    # когда последний раз смотрели профиль игрока
 PROFILE_SHARE = float(os.getenv("PROFILE_SHARE", "0.25"))  # доля запросов на профили
 REPROFILE_DAYS = 3    # профиль перечитываем не чаще раза в 3 дня
-BUILD_DECAY = 0.995   # старые данные о сборках понемногу «забываются» (полураспад ~2,5 недели)
+BUILD_DECAY = 0.983   # старые данные о сборках «забываются»: при 8 запусках в день полураспад ~5 дней
 MIN_POWER = 9         # учитываем бойцов, у которых уже можно открыть пассивку
 
 SEED_COUNTRIES = ["global", "ru", "us", "br", "kr", "jp", "de", "fr", "es", "tr", "mx", "pl", "ua", "kz"]
@@ -413,8 +413,8 @@ def main():
 
     for day, d in days.items():
         save_json(DAILY / f"{day}.json", d)
-    # чистим старые дневные файлы (старше 35 дней)
-    old = (now - timedelta(days=35)).strftime("%Y-%m-%d")
+    # удаляем дневные файлы старше окна статистики (10 дней): старая мета не портит советы
+    old = (now - timedelta(days=int(os.getenv("WINDOW_DAYS", "10")) - 1)).strftime("%Y-%m-%d")
     for f in DAILY.glob("*.json"):
         if f.stem < old:
             f.unlink()
