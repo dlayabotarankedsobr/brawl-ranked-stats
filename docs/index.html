@@ -245,7 +245,7 @@ const T = {
     g_vision: "кустов {p}% — «Зрение», чтобы враг не прятался в кустах",
     g_vision_enemy: "кустов {p}% и у врага ближний бой — «Зрение» против засад",
     acc_title: "Мой аккаунт", acc_hint: "Введи тег — учту силу бойцов, гаджеты, пассивки и снаряжение. Бот пришлёт ссылку.",
-    acc_find: "Найти", acc_forget: "Убрать", acc_open: "Профиль",
+    acc_find: "Найти", acc_forget: "Убрать", acc_open: "Профиль", acc_loading: "Ищу…", acc_notfound: "Игрок не найден. Проверь тег.", img_sent: "Картинка отправлена в чат с ботом ✅", img_wait: "Рисую…",
     m_trophies: "Кубки", m_best: "Рекорд кубков", m_ranked: "Ранкед сейчас", m_best_ranked: "Лучший ранкед", m_level: "Уровень",
     m_img: "Картинка профиля в чат",
     hc: "Гиперзаряд", bf: "Баффи", bf_g: "гаджет", bf_s: "пасс.", bf_h: "гипер",
@@ -297,7 +297,7 @@ const T = {
     g_vision: "{p}% bushes — Vision so enemies can't hide in bushes",
     g_vision_enemy: "{p}% bushes and enemy close-range — Vision against ambushes",
     acc_title: "My account", acc_hint: "Enter your tag — I'll account for power levels, gadgets, star powers and gears. The bot will send a link.",
-    acc_find: "Find", acc_forget: "Remove", acc_open: "Profile",
+    acc_find: "Find", acc_forget: "Remove", acc_open: "Profile", acc_loading: "Searching…", acc_notfound: "Player not found. Check the tag.", img_sent: "Image sent to the bot chat ✅", img_wait: "Drawing…",
     m_trophies: "Trophies", m_best: "Highest trophies", m_ranked: "Ranked now", m_best_ranked: "Best ranked", m_level: "Level",
     m_img: "Profile image to chat",
     hc: "Hypercharge", bf: "Buffies", bf_g: "gadget", bf_s: "star", bf_h: "hyper",
@@ -571,19 +571,41 @@ function cloudGet(key) { return new Promise(res => {
   res(safeGet(key)); }); }
 function cloudSet(key, v) { safeSet(key, v);
   try { if (tg && tg.CloudStorage && tg.isVersionAtLeast && tg.isVersionAtLeast("6.9")) tg.CloudStorage.setItem(key, v); } catch (e) {} }
+// Сервер бота (адрес приходит в ссылке ?api=..., бот обновляет его при каждом запуске)
+let API = "";
+async function initApi() {
+  const q = new URLSearchParams(location.search).get("api");   // только из ссылки: адрес туннеля меняется при перезапуске бота
+  API = q && /^https:\/\//.test(q) ? q.replace(/\/$/, "") : "";
+}
+function apiFetch(path, opts = {}) {
+  const ctrl = new AbortController(); const tm = setTimeout(() => ctrl.abort(), 20000);
+  return fetch(API + path, { ...opts, signal: ctrl.signal,
+    headers: { ...(opts.headers || {}), "X-Init-Data": (tg && tg.initData) || "" } }).finally(() => clearTimeout(tm));
+}
+async function applyAccount(code, name, meta) {
+  cloudSet("acc", code); cloudSet("acc_name", name || ""); cloudSet("acc_meta", JSON.stringify(meta || {}));
+  ACC_META = meta || {};
+  try { ACC = await decodeAcc(code, name || ""); } catch (e) { ACC = null; console.error(e); }
+  if (ACC) OWNED = new Set(Object.keys(ACC.b));
+}
 async function loadAccount() {
   const h = new URLSearchParams(location.hash.slice(1));
   let code = h.get("acc"), name = h.get("name");
-  if (code) { cloudSet("acc", code); cloudSet("acc_name", name || "");
-    const meta = {}; for (const k of ["tag", "tr", "htr", "rr", "elo", "hrr", "helo", "lvl"]) if (h.get(k)) meta[k] = h.get(k);
-    cloudSet("acc_meta", JSON.stringify(meta)); ACC_META = meta;
-    history.replaceState(null, "", location.pathname + location.search); }
-  else { code = await cloudGet("acc"); name = await cloudGet("acc_name");
-    try { ACC_META = JSON.parse((await cloudGet("acc_meta")) || "{}"); } catch (e) { ACC_META = {}; } }
+  if (code) { const meta = {}; for (const k of ["tag", "tr", "htr", "rr", "elo", "hrr", "helo", "lvl"]) if (h.get(k)) meta[k] = h.get(k);
+    history.replaceState(null, "", location.pathname + location.search);
+    await applyAccount(code, name, meta); return; }
+  code = await cloudGet("acc"); name = await cloudGet("acc_name");
+  try { ACC_META = JSON.parse((await cloudGet("acc_meta")) || "{}"); } catch (e) { ACC_META = {}; }
   if (!code) return;
   try { ACC = await decodeAcc(code, name || ""); } catch (e) { ACC = null; console.error(e); }
   if (ACC) OWNED = new Set(Object.keys(ACC.b));   // аккаунт заменяет ручной список «Мои бойцы»
 }
+function toast(msg) {
+  try { if (tg && tg.showAlert && tg.isVersionAtLeast && tg.isVersionAtLeast("6.2")) { tg.showAlert(msg); return; } } catch (e) {}
+  alert(msg);
+}
+function openBot(start) { const link = `https://t.me/${BOT_USERNAME}?start=${start}`;
+  if (tg) { tg.openTelegramLink(link); try { tg.close(); } catch (e) {} } else location.href = link; }
 // Штраф за прокачку: слабая сила, нет нужного гаджета/пассивки/снаряжения
 function accountPenalty(c) {
   if (!ACC || !ACC.b[c]) return [0, []];
@@ -920,11 +942,25 @@ document.addEventListener("click", e => {
   else if (act === "accfind") {
     const tag = (document.getElementById("tag").value || "").toUpperCase().replace(/[^0289PYLQGRJCUV]/g, "");
     if (tag.length < 3) { document.getElementById("tag").focus(); return; }
-    const link = `https://t.me/${BOT_USERNAME}?start=tag_${tag}`;
-    if (tg) { tg.openTelegramLink(link); try { tg.close(); } catch (e) {} } else location.href = link;
+    if (!API) { openBot(`tag_${tag}`); return; }
+    el.disabled = true; el.textContent = t("acc_loading");
+    apiFetch(`/api/profile?tag=${tag}`).then(async r => {
+      if (r.status === 404) { toast(t("acc_notfound")); return; }
+      if (!r.ok) throw new Error(r.status);
+      const d = await r.json(); await applyAccount(d.acc, d.name, d.meta);
+      haptic("medium"); st.stage = "profile"; st.q = ""; window.scrollTo(0, 0);
+    }).catch(() => openBot(`tag_${tag}`))   // сервер бота недоступен — по-старому, через чат
+      .finally(() => render());
   }
-  else if (act === "img") { const link = `https://t.me/${BOT_USERNAME}?start=img_${ACC_META.tag}`;
-    if (tg) { tg.openTelegramLink(link); try { tg.close(); } catch (e) {} } else location.href = link; }
+  else if (act === "img") {
+    if (!API) { openBot(`img_${ACC_META.tag}`); return; }
+    const txt = el.textContent; el.disabled = true; el.textContent = "🖼 " + t("img_wait");
+    apiFetch("/api/card", { method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ tag: ACC_META.tag, lang: LANG }) })
+      .then(r => { if (!r.ok) throw new Error(r.status); haptic("medium"); toast(t("img_sent")); })
+      .catch(() => openBot(`img_${ACC_META.tag}`))
+      .finally(() => { el.disabled = false; el.textContent = txt; });
+  }
   else if (act === "profile") { st.stage = "profile"; st.q = ""; render(); window.scrollTo(0, 0); }
   else if (act === "accforget") { ACC = null; OWNED = new Set(); cloudSet("acc", ""); cloudSet("acc_name", ""); loadOwned().then(render); }
   else if (act === "my") { st.stage = "my"; st.q = ""; render(); window.scrollTo(0, 0); }
@@ -936,6 +972,7 @@ function goBack() { if (st.stage === "first") st.stage = "map"; else if (["map",
 
 (async function init() {
   document.documentElement.lang = LANG;
+  await initApi();
   if (tg) { tg.ready(); tg.expand(); try { tg.setHeaderColor("#1B2A6B"); tg.setBackgroundColor("#1B2A6B"); } catch (e) {}
     tg.BackButton.onClick(goBack); }
   app.innerHTML = `<div class="empty">${t("loading")}</div>`;
