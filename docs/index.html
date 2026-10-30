@@ -574,8 +574,9 @@ function cloudSet(key, v) { safeSet(key, v);
 // Сервер бота (адрес приходит в ссылке ?api=..., бот обновляет его при каждом запуске)
 let API = "";
 async function initApi() {
-  const q = new URLSearchParams(location.search).get("api");   // только из ссылки: адрес туннеля меняется при перезапуске бота
-  API = q && /^https:\/\//.test(q) ? q.replace(/\/$/, "") : "";
+  const q = new URLSearchParams(location.search).get("api");   // адрес сервера бота приходит в ссылке
+  if (q && /^https:\/\//.test(q)) { API = q.replace(/\/$/, ""); cloudSet("api", API); }
+  else API = (await cloudGet("api")) || "";   // запасной: последний известный адрес (если устарел — уйдём в чат)
 }
 function apiFetch(path, opts = {}) {
   const ctrl = new AbortController(); const tm = setTimeout(() => ctrl.abort(), 20000);
