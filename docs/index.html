@@ -182,6 +182,8 @@ img { display: block; }
 .dock button:disabled { opacity: .4; }
 .empty { text-align: center; color: var(--muted); padding: 30px 10px; }
 .done { text-align: center; font-weight: 900; font-size: 20px; margin: 14px 0; text-shadow: 0 2px 0 var(--ink); }
+.br.lock { opacity: .32; filter: grayscale(.8); }
+.br.maxed { box-shadow: 0 0 0 2px #ffd34d inset; }
 </style>
 </head>
 <body>
@@ -252,7 +254,7 @@ const T = {
     p_brawlers: "Бойцы {n}/{t}", p_max: "Сила 11: {n}", p_gadgets: "Гаджеты: {n}", p_sps: "Пассивки: {n}",
     p_hc: "Гиперзаряды: {n}", p_buffies: "Баффи: {n}", p_gears: "Снаряжение: {n}", acc_stats: "Бойцов: {n} · максимальной силы: {m}",
     acc_missing: "у тебя этого нет",
-    acc_power: "сила {x} из 11", acc_no_gadget: "нет ни одного гаджета", acc_wrong_gadget: "нет гаджета «{x}»",
+    acc_power: "сила {x} из 11", acc_trial: "в этом сезоне выдаётся всем на 11 силе", acc_cant: "у тебя сила {x} из 11 — в ранкеде не взять", acc_no_gadget: "нет ни одного гаджета", acc_wrong_gadget: "нет гаджета «{x}»",
     acc_no_sp: "нет пассивки", acc_wrong_sp: "нет пассивки «{x}»", acc_no_gear: "нет снаряжения",
   },
   en: {
@@ -304,7 +306,7 @@ const T = {
     p_brawlers: "Brawlers {n}/{t}", p_max: "Power 11: {n}", p_gadgets: "Gadgets: {n}", p_sps: "Star Powers: {n}",
     p_hc: "Hypercharges: {n}", p_buffies: "Buffies: {n}", p_gears: "Gears: {n}", acc_stats: "Brawlers: {n} · max power: {m}",
     acc_missing: "you don't have this",
-    acc_power: "power {x} of 11", acc_no_gadget: "no gadgets", acc_wrong_gadget: "missing gadget “{x}”",
+    acc_power: "power {x} of 11", acc_trial: "maxed for everyone this ranked season", acc_cant: "you have power {x} of 11 — not allowed in ranked", acc_no_gadget: "no gadgets", acc_wrong_gadget: "missing gadget “{x}”",
     acc_no_sp: "no star power", acc_wrong_sp: "missing star power “{x}”", acc_no_gear: "no gears",
   },
 };
@@ -335,6 +337,19 @@ let ACC = null;
 let ACC_META = {};       // кубки, рекорд, ранкед, уровень, тег          // прокачка аккаунта: { name, b: { ключ: {power, gadgets:Set, sps:Set, gears:Set, hc} } }
 let OWNED = new Set();   // «мои бойцы» (хранится в Telegram CloudStorage)
 let ONLY_MINE = true;
+let MAXED = new Set();   // бойцы сезона ранкеда: всем на 11 силе со всем снаряжением (docs/ranked-season.json)
+async function loadSeason() {
+  let api = ["PEARL", "BYRON", "SIRIUS"];   // запасной список, если файл не загрузился (сезон 50, с 15.10.2026)
+  try { const r = await fetch("ranked-season.json?v=" + Date.now()); if (r.ok) api = (await r.json()).maxed || api; } catch (e) {}
+  const byApi = {}; for (const k in B) byApi[(B[k].api || "").toUpperCase()] = k;
+  MAXED = new Set(api.map(a => byApi[a.toUpperCase()]).filter(Boolean));
+}
+// Можно ли взять бойца в ранкеде: бойцы сезона — всегда; иначе нужна 11 сила на аккаунте
+function canPick(c) {
+  if (MAXED.has(c)) return true;
+  if (ACC) return !!(ACC.b[c] && ACC.b[c].power >= 11);
+  return OWNED.size ? OWNED.has(c) : true;
+}
 
 function keyFromApi(api) {
   if (API2K[api]) return API2K[api];
@@ -458,8 +473,8 @@ function scoreOf(c, d, bs, open) {
 function ranked(d, wantMeta) {
   if (!d.mode || !hasMap(d.map, d.mode)) return [];
   const taken = new Set([...d.bans, ...d.enemy, ...d.ally]); const open = openness(d.map, d.mode); const res = [];
-  const mine = ONLY_MINE && OWNED.size ? OWNED : null;
-  for (const c in (S.modeB[d.mode] || {})) { if (taken.has(c) || (mine && !mine.has(c))) continue;
+  const mine = ONLY_MINE && (ACC || OWNED.size) ? true : null;   // только те, кого реально можно взять
+  for (const c in (S.modeB[d.mode] || {})) { if (taken.has(c) || (mine && !canPick(c))) continue;
     const bs = brawlerScore(c, d.map, d.mode); if (!bs || (!mine && bs.meta !== wantMeta) || (mine && wantMeta === false)) continue;
     const { score, why } = scoreOf(c, d, bs, open); res.push({ c, score, why }); }
   return res.sort((a, b) => b.score - a.score);
@@ -609,9 +624,10 @@ function openBot(start) { const link = `https://t.me/${BOT_USERNAME}?start=${sta
   if (tg) { tg.openTelegramLink(link); try { tg.close(); } catch (e) {} } else location.href = link; }
 // Штраф за прокачку: слабая сила, нет нужного гаджета/пассивки/снаряжения
 function accountPenalty(c) {
+  if (MAXED.has(c)) return [0, [["acc_trial"]]];   // боец сезона: 11 сила, всё снаряжение
   if (!ACC || !ACC.b[c]) return [0, []];
   const a = ACC.b[c], notes = []; let pts = 0;
-  if (a.power < 11) { pts -= (11 - a.power) * 2; notes.push(["acc_power", a.power]); }
+  if (a.power < 11) { pts -= 100; notes.push(["acc_cant", a.power]); }   // в ранкеде нужна 11 сила
   const bd = build(c);
   if (!a.gadgets.size) { pts -= 10; notes.push(["acc_no_gadget"]); }
   else if (bd && bd.gadget && !bd.gadget.some(x => a.gadgets.has(x))) { pts -= 3; notes.push(["acc_wrong_gadget", thing(bd.gadget[0])]); }
@@ -812,7 +828,7 @@ function slots(list, n, cls, nextIdx) {
 function whyText(w) {
   const names = l => l.map(bname).join(", ");
   if (w[0] === "comp") return (w[2] ? "👍 " : "⚠️ ") + t(w[1]);
-  if (w[0] === "acc") return "🔒 " + t(w[1], { x: w[2] });
+  if (w[0] === "acc") return (w[1] === "acc_trial" ? "⭐ " : "🔒 ") + t(w[1], { x: w[2] });
   if (w[0] === "w_counters" || w[0] === "w_loses" || w[0] === "w_synergy") return t(w[0], { l: names(w[1]) });
   return t(w[0]);
 }
@@ -912,7 +928,9 @@ function renderDraft() {
 function gridItem(k) {
   const off = st.stage !== "my" && taken().has(k);
   const own = st.stage === "my" && OWNED.has(k);
-  return `<button class="br ${own ? "owned" : ""}" data-k="${k}" ${off ? "disabled" : ""} ${st.stage === "my" ? `aria-pressed="${own}"` : ""}>${imgOr(brawlerImg(k), initials(k), bname(k))}<span>${esc(bname(k))}</span></button>`;
+  const cur = st.stage === "picks" ? current() : null;   // наш пик: бойцов, которых нельзя взять, приглушаем
+  const lock = !off && cur && cur[0] === US && (ACC || OWNED.size) && !canPick(k);
+  return `<button class="br ${own ? "owned" : ""}${lock ? " lock" : ""}${MAXED.has(k) && st.stage !== "my" ? " maxed" : ""}" data-k="${k}" ${off ? "disabled" : ""} ${st.stage === "my" ? `aria-pressed="${own}"` : ""}>${imgOr(brawlerImg(k), initials(k), bname(k))}<span>${esc(bname(k))}</span></button>`;
 }
 function gridHtml() {
   // порядок: сначала популярные на этой карте, потом остальные по алфавиту
@@ -979,7 +997,7 @@ function goBack() { if (st.stage === "first") st.stage = "map"; else if (["map",
   if (tg) { tg.ready(); tg.expand(); try { tg.setHeaderColor("#1B2A6B"); tg.setBackgroundColor("#1B2A6B"); } catch (e) {}
     tg.BackButton.onClick(goBack); }
   app.innerHTML = `<div class="empty">${t("loading")}</div>`;
-  try { await Promise.all([load(), loadOwned()]); await loadAccount(); } catch (e) { app.innerHTML = `<div class="empty">${t("load_err")}</div>`; console.error(e); return; }
+  try { await Promise.all([load(), loadOwned()]); await loadAccount(); await loadSeason(); } catch (e) { app.innerHTML = `<div class="empty">${t("load_err")}</div>`; console.error(e); return; }
   render();
 })();
 </script>
