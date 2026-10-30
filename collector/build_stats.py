@@ -22,6 +22,17 @@ def add(dst, src):
         cell[1] += w
 
 
+def deep_add(dst, src):
+    """Складывает вложенные счётчики сборок (ids — справочник, просто копируем)."""
+    for k, v in src.items():
+        if k == "ids":
+            dst.setdefault("ids", {}).update(v)
+        elif isinstance(v, dict):
+            deep_add(dst.setdefault(k, {}), v)
+        elif isinstance(v, (int, float)):
+            dst[k] = dst.get(k, 0) + v
+
+
 def main():
     now = datetime.now(timezone.utc)
     start = (now - timedelta(days=WINDOW_DAYS - 1)).strftime("%Y-%m-%d")
@@ -51,13 +62,12 @@ def main():
             for bn, kinds in brs.items():
                 for kind, vals in kinds.items():
                     add(dst.setdefault(bn, {}).setdefault(kind, {}), vals)
+        if d.get("builds"):  # сборки (гаджеты, пассивки, снаряжение) игроков Легенды+ за этот день
+            deep_add(out.setdefault("builds", {}), d["builds"])
         for mode in d["vs"]:
             add(out["vs"].setdefault(mode, {}), d["vs"][mode])
         for mode in d["with"]:
             add(out["with"].setdefault(mode, {}), d["with"][mode])
-    bf = ROOT / "data" / "builds.json"
-    if bf.exists():  # сборки (гаджеты, пассивки, снаряжение) игроков Легенды+
-        out["builds"] = json.loads(bf.read_text(encoding="utf-8"))
     bl = ROOT / "data" / "brawlers.json"
     if bl.exists():  # полный список бойцов с классами — бот берёт его отсюда
         out["brawler_list"] = json.loads(bl.read_text(encoding="utf-8"))

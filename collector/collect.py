@@ -45,7 +45,6 @@ PROFILED_FILE = DATA / "profiled.json"
 SAMPLE_FILE = DATA / "profile_sample.json"   # образец профиля игрока из API    # когда последний раз смотрели профиль игрока
 PROFILE_SHARE = float(os.getenv("PROFILE_SHARE", "0.25"))  # доля запросов на профили
 REPROFILE_DAYS = 3    # профиль перечитываем не чаще раза в 3 дня
-BUILD_DECAY = 0.983   # старые данные о сборках «забываются»: при 8 запусках в день полураспад ~5 дней
 MIN_POWER = 9         # учитываем бойцов, у которых уже можно открыть пассивку
 
 SEED_COUNTRIES = ["global", "ru", "us", "br", "kr", "jp", "de", "fr", "es", "tr", "mx", "pl", "ua", "kz"]
@@ -175,14 +174,6 @@ def add_loadout(day_data, scope, brawler, lo, win):
             cell[1] += 1 if win else 0
 
 
-def decay_builds(builds, k):
-    def walk(x):
-        if isinstance(x, dict):
-            return {key: (v if key == "ids" else walk(v)) for key, v in x.items()}
-        return round(x * k, 3) if isinstance(x, (int, float)) else x
-    return walk(builds)
-
-
 # ---------------- разбор боя ----------------
 def battle_id(item, tags):
     raw = item["battleTime"] + "|" + "|".join(sorted(tags))
@@ -277,13 +268,15 @@ def main():
     seen = {d: ids for d, ids in seen.items() if d >= cutoff}
     seen_set = {i for ids in seen.values() for i in ids}
     days: dict[str, dict] = {}
-    builds = decay_builds(load_json(BUILDS_FILE, {}), BUILD_DECAY)
     profiled = load_json(PROFILED_FILE, {})                # tag -> день последнего просмотра профиля
     re_cut = (now - timedelta(days=REPROFILE_DAYS)).strftime("%Y-%m-%d")
     profiled = {t: d for t, d in profiled.items() if d >= re_cut}
     profile_q: list[str] = []
     pending: dict[str, list] = {}   # tag -> бои этого запуска: (боец, режим, карта, победа, день)
     today = now.strftime("%Y-%m-%d")
+    # сборки игроков теперь копятся по дням (как и бои) — в статистику идут только последние 10 дней
+    days[today] = load_json(DAILY / f"{today}.json", None) or new_day()
+    builds = days[today].setdefault("builds", {})
 
     pro_tags = set()
     if PRO_TAGS_FILE.exists():
@@ -421,7 +414,8 @@ def main():
     save_json(PLAYERS_FILE, players)
     save_json(SEEN_FILE, seen)
     save_json(RANK_NAMES_FILE, rank_names, compact=False)
-    save_json(BUILDS_FILE, builds)
+    if BUILDS_FILE.exists():   # старый общий файл сборок (копился неделями) больше не нужен
+        BUILDS_FILE.unlink()
     save_json(PROFILED_FILE, {t: d for t, d in profiled.items() if d != "queued"})
 
     print(f"Запросов: {api.calls}, ошибок: {api.errors}, игроков проверено: {stats['players']}")
