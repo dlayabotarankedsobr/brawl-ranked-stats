@@ -1,0 +1,244 @@
+{
+ "brawlers": [
+  {
+   "buffies": {
+    "gadget": false,
+    "hyperCharge": false,
+    "starPower": false
+   },
+   "currentWinStreak": 0,
+   "gadgets": [
+    {
+     "id": 23001255,
+     "name": "FLOATY TIME"
+    },
+    {
+     "id": 23001256,
+     "name": "SHINING STARR OF FRIENDSHIP AND JUSTICE"
+    }
+   ],
+   "gears": [
+    {
+     "id": 62000002,
+     "level": 3,
+     "name": "DAMAGE"
+    },
+    {
+     "id": 62000003,
+     "level": 3,
+     "name": "VISION"
+    },
+    {
+     "id": 62000000,
+     "level": 3,
+     "name": "SPEED"
+    },
+    {
+     "id": 62000004,
+     "level": 3,
+     "name": "SHIELD"
+    }
+   ],
+   "highestTrophies": 2045,
+   "hyperCharges": [
+    {
+     "id": 23001284,
+     "name": "STARR NOVA: THE HYPERCHARGE"
+    }
+   ],
+   "id": 16000105,
+   "maxWinStreak": 32,
+   "name": "STARR NOVA",
+   "power": 11,
+   "prestigeLevel": 2,
+   "rank": 6,
+   "skin": {
+    "id": 29001599,
+    "name": "STARR NOVA"
+   },
+   "starPowers": [
+    {
+     "id": 23001253,
+     "name": "POWER LEVEL: MAXIMUM"
+    },
+    {
+     "id": 23001254,
+     "name": "MYSTICAL STARR TECHNIQUE"
+    }
+   ],
+   "trophies": 2007
+  },
+  {
+   "buffies": {
+    "gadget": false,
+    "hyperCharge": false,
+    "starPower": false
+   },
+   "currentWinStreak": 1,
+   "gadgets": [
+    {
+     "id": 23000333,
+     "name": "SHOT IN THE ARM"
+    },
+    {
+     "id": 23000461,
+     "name": "BOOSTER SHOTS"
+    }
+   ],
+   "gears": [
+    {
+     "id": 62000002,
+     "level": 3,
+     "name": "DAMAGE"
+    },
+    {
+     "id": 62000003,
+     "level": 3,
+     "name": "VISION"
+    },
+    {
+     "id": 62000017,
+     "level": 3,
+     "name": "GADGET COOLDOWN"
+    },
+    {
+     "id": 62000001,
+     "level": 3,
+     "name": "HEALTH"
+    },
+    {
+     "id": 62000004,
+     "level": 3,
+     "name": "SHIELD"
+    }
+   ],
+   "highestTrophies": 1270,
+   "hyperCharges": [
+    {
+     "id": 23001026,
+     "name": "UNSTABLE CONCOCTION"
+    }
+   ],
+   "id": 16000042,
+   "maxWinStreak": 9,
+   "name": "BYRON",
+   "power": 11,
+   "prestigeLevel": 1,
+   "rank": 5,
+   "skin": {
+    "id": 29001689,
+    "name": "BIOTECH BYRON"
+   },
+   "starPowers": [
+    {
+     "id": 23000331,
+     "name": "MALAISE"
+    },
+    {
+     "id": 23000332,
+     "name": "INJECTION"
+    }
+   ],
+   "trophies": 1270
+  },
+  {
+   "buffies": {
+    "gadget": false,
+    "hyperCharge": false,
+    "starPower": false
+   },
+   "currentWinStreak": 2,
+   "gadgets": [
+    {
+     "id": 23000991,
+     "name": "FEED THE GATORS"
+    },
+    {
+     "id": 23000992,
+     "name": "COLD-BLOODED"
+    }
+   ],
+   "gears": [
+    {
+     "id": 62000002,
+     "level": 3,
+     "name": "DAMAGE"
+    },
+    {
+     "id": 62000000,
+     "level": 3,
+     "name": "SPEED"
+    },
+    {
+     "id": 62000017,
+     "level": 3,
+     "name": "GADGET COOLDOWN"
+    },
+    {
+     "id": 62000004,
+     "level": 3,
+     "name": "SHIELD"
+    }
+   ],
+   "highestTrophies": 1495,
+   "hyperCharges": [
+    {
+     "id": 23001139,
+     "name": "SWAMP SNACKING"
+    }
+   ],
+   "id": 16000095,
+   "maxWinStreak": 21,
+   "name": "ALLI",
+   "power": 11,
+   "prestigeLevel": 1,
+   "rank": 5,
+   "skin": {
+    "id": 29001414,
+    "name": "BADDIE ALLI"
+   },
+   "starPowers": [
+    {
+     "id": 23000989,
+     "name": "LIZARD LIMBS"
+    },
+    {
+     "id": 23000990,
+     "name": "YOU BETTER RUN, YOU BETTER TAKE COVER"
+    }
+   ],
+   "trophies": 1495
+  }
+ ],
+ "keys": [
+  "3vs3Victories",
+  "bestRoboRumbleTime",
+  "bestTimeAsBigBrawler",
+  "brawlers",
+  "club",
+  "duoVictories",
+  "expLevel",
+  "expPoints",
+  "fame",
+  "fameTierName",
+  "highestAllTimeRankedElo",
+  "highestAllTimeRankedRank",
+  "highestAllTimeRankedRankName",
+  "highestSeasonRankedElo",
+  "highestSeasonRankedRank",
+  "highestSeasonRankedRankName",
+  "highestTrophies",
+  "icon",
+  "isQualifiedFromChampionshipChallenge",
+  "name",
+  "nameColor",
+  "rankedElo",
+  "rankedRank",
+  "rankedRankName",
+  "rankedSeasonId",
+  "soloVictories",
+  "tag",
+  "totalPrestigeLevel",
+  "trophies"
+ ]
+}

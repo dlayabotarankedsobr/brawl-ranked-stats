@@ -1,0 +1,2486 @@
+{
+ "8-BIT": {
+  "gadgets": [
+   [
+    23000259,
+    "CHEAT CARTRIDGE"
+   ],
+   [
+    23000318,
+    "EXTRA CREDITS"
+   ]
+  ],
+  "id": 16000027,
+  "starPowers": [
+   [
+    23000168,
+    "BOOSTED BOOSTER"
+   ],
+   [
+    23000181,
+    "PLUGGED IN"
+   ]
+  ]
+ },
+ "ALLI": {
+  "gadgets": [
+   [
+    23000991,
+    "FEED THE GATORS"
+   ],
+   [
+    23000992,
+    "COLD-BLOODED"
+   ]
+  ],
+  "id": 16000095,
+  "starPowers": [
+   [
+    23000989,
+    "LIZARD LIMBS"
+   ],
+   [
+    23000990,
+    "YOU BETTER RUN, YOU BETTER TAKE COVER"
+   ]
+  ]
+ },
+ "AMBER": {
+  "gadgets": [
+   [
+    23000309,
+    "FIRE STARTERS"
+   ],
+   [
+    23000488,
+    "DANCING FLAMES"
+   ]
+  ],
+  "id": 16000040,
+  "starPowers": [
+   [
+    23000307,
+    "WILD FLAMES"
+   ],
+   [
+    23000308,
+    "SCORCHIN' SIPHON"
+   ]
+  ]
+ },
+ "ANGELO": {
+  "gadgets": [
+   [
+    23000677,
+    "STINGING FLIGHT"
+   ],
+   [
+    23000678,
+    "MASTER FLETCHER"
+   ]
+  ],
+  "id": 16000079,
+  "starPowers": [
+   [
+    23000675,
+    "EMPOWER"
+   ],
+   [
+    23000676,
+    "FLOW"
+   ]
+  ]
+ },
+ "ASH": {
+  "gadgets": [
+   [
+    23000416,
+    "CHILL PILL"
+   ],
+   [
+    23000465,
+    "ROTTEN BANANA"
+   ]
+  ],
+  "id": 16000051,
+  "starPowers": [
+   [
+    23000414,
+    "FIRST BASH"
+   ],
+   [
+    23000415,
+    "MAD AS HECK"
+   ]
+  ]
+ },
+ "BARLEY": {
+  "gadgets": [
+   [
+    23000250,
+    "STICKY SYRUP MIXER"
+   ],
+   [
+    23000293,
+    "HERBAL TONIC"
+   ]
+  ],
+  "id": 16000006,
+  "starPowers": [
+   [
+    23000082,
+    "MEDICAL USE"
+   ],
+   [
+    23000158,
+    "EXTRA NOXIOUS"
+   ]
+  ]
+ },
+ "BEA": {
+  "gadgets": [
+   [
+    23000271,
+    "HONEY MOLASSES"
+   ],
+   [
+    23000312,
+    "RATTLED HIVE"
+   ]
+  ],
+  "id": 16000029,
+  "starPowers": [
+   [
+    23000192,
+    "INSTA BEALOAD"
+   ],
+   [
+    23000193,
+    "HONEYCOMB"
+   ]
+  ]
+ },
+ "BELLE": {
+  "gadgets": [
+   [
+    23000371,
+    "NEST EGG"
+   ],
+   [
+    23000463,
+    "REVERSE POLARITY"
+   ]
+  ],
+  "id": 16000046,
+  "starPowers": [
+   [
+    23000369,
+    "POSITIVE FEEDBACK"
+   ],
+   [
+    23000370,
+    "GROUNDED"
+   ]
+  ]
+ },
+ "BERRY": {
+  "gadgets": [
+   [
+    23000766,
+    "FRIENDSHIP IS GREAT"
+   ],
+   [
+    23000767,
+    "HEALTHY ADDITIVES"
+   ]
+  ],
+  "id": 16000082,
+  "starPowers": [
+   [
+    23000764,
+    "FLOOR IS FINE"
+   ],
+   [
+    23000765,
+    "MAKING A MESS"
+   ]
+  ]
+ },
+ "BIBI": {
+  "gadgets": [
+   [
+    23000275,
+    "VITAMIN BOOSTER"
+   ],
+   [
+    23000458,
+    "EXTRA STICKY"
+   ]
+  ],
+  "id": 16000026,
+  "starPowers": [
+   [
+    23000134,
+    "HOME RUN"
+   ],
+   [
+    23000146,
+    "BATTING STANCE"
+   ]
+  ]
+ },
+ "BO": {
+  "gadgets": [
+   [
+    23000263,
+    "SUPER TOTEM"
+   ],
+   [
+    23000289,
+    "TRIPWIRE"
+   ]
+  ],
+  "id": 16000014,
+  "starPowers": [
+   [
+    23000090,
+    "CIRCLING EAGLE"
+   ],
+   [
+    23000148,
+    "SNARE A BEAR"
+   ]
+  ]
+ },
+ "BOLT": {
+  "gadgets": [
+   [
+    23001281,
+    "OIL CHANGE"
+   ],
+   [
+    23001282,
+    "BOUNCY BALL"
+   ]
+  ],
+  "id": 16000106,
+  "starPowers": [
+   [
+    23001279,
+    "TOSS UP"
+   ],
+   [
+    23001280,
+    "UNSTOPPABALL"
+   ]
+  ]
+ },
+ "BONNIE": {
+  "gadgets": [
+   [
+    23000480,
+    "SUGAR RUSH"
+   ],
+   [
+    23000481,
+    "CRASH TEST"
+   ]
+  ],
+  "id": 16000058,
+  "starPowers": [
+   [
+    23000478,
+    "BLACK POWDER"
+   ],
+   [
+    23000479,
+    "WISDOM TOOTH"
+   ]
+  ]
+ },
+ "BROCK": {
+  "gadgets": [
+   [
+    23000245,
+    "ROCKET LACES"
+   ],
+   [
+    23000316,
+    "ROCKET FUEL"
+   ]
+  ],
+  "id": 16000003,
+  "starPowers": [
+   [
+    23000079,
+    "MORE ROCKETS!"
+   ],
+   [
+    23000150,
+    "ROCKET NO. 4"
+   ]
+  ]
+ },
+ "BULL": {
+  "gadgets": [
+   [
+    23000272,
+    "T-BONE MISSILE"
+   ],
+   [
+    23000310,
+    "STOMPER"
+   ]
+  ],
+  "id": 16000002,
+  "starPowers": [
+   [
+    23000078,
+    "BERSERKER"
+   ],
+   [
+    23000137,
+    "TOUGH GUY"
+   ]
+  ]
+ },
+ "BUSTER": {
+  "gadgets": [
+   [
+    23000521,
+    "UTILITY BELT"
+   ],
+   [
+    23000522,
+    "SLO-MO REPLAY"
+   ]
+  ],
+  "id": 16000062,
+  "starPowers": [
+   [
+    23000519,
+    "BLOCKBUSTER"
+   ],
+   [
+    23000520,
+    "KEVLAR VEST"
+   ]
+  ]
+ },
+ "BUZZ": {
+  "gadgets": [
+   [
+    23000392,
+    "RESERVE BUOY"
+   ],
+   [
+    23000490,
+    "X-RAY-SHADES"
+   ]
+  ],
+  "id": 16000049,
+  "starPowers": [
+   [
+    23000390,
+    "TOUGHER TORPEDO"
+   ],
+   [
+    23000391,
+    "EYES SHARP"
+   ]
+  ]
+ },
+ "BYRON": {
+  "gadgets": [
+   [
+    23000333,
+    "SHOT IN THE ARM"
+   ],
+   [
+    23000461,
+    "BOOSTER SHOTS"
+   ]
+  ],
+  "id": 16000042,
+  "starPowers": [
+   [
+    23000331,
+    "MALAISE"
+   ],
+   [
+    23000332,
+    "INJECTION"
+   ]
+  ]
+ },
+ "CARL": {
+  "gadgets": [
+   [
+    23000262,
+    "HEAT EJECTOR"
+   ],
+   [
+    23000317,
+    "FLYING HOOK"
+   ]
+  ],
+  "id": 16000025,
+  "starPowers": [
+   [
+    23000129,
+    "POWER THROW"
+   ],
+   [
+    23000145,
+    "PROTECTIVE PIROUETTE"
+   ]
+  ]
+ },
+ "CHARLIE": {
+  "gadgets": [
+   [
+    23000625,
+    "SPIDERS"
+   ],
+   [
+    23000626,
+    "PERSONAL SPACE"
+   ]
+  ],
+  "id": 16000074,
+  "starPowers": [
+   [
+    23000623,
+    "DIGESTIVE"
+   ],
+   [
+    23000624,
+    "SLIMY"
+   ]
+  ]
+ },
+ "CHESTER": {
+  "gadgets": [
+   [
+    23000529,
+    "SPICY DICE"
+   ],
+   [
+    23000530,
+    "CANDY BEANS"
+   ]
+  ],
+  "id": 16000063,
+  "starPowers": [
+   [
+    23000527,
+    "SINGLE BELL'O'MANIA"
+   ],
+   [
+    23000528,
+    "SNEAK PEEK"
+   ]
+  ]
+ },
+ "CHUCK": {
+  "gadgets": [
+   [
+    23000611,
+    "REROUTING"
+   ],
+   [
+    23000612,
+    "GHOST TRAIN"
+   ]
+  ],
+  "id": 16000073,
+  "starPowers": [
+   [
+    23000609,
+    "PIT STOP"
+   ],
+   [
+    23000610,
+    "TICKETS PLEASE!"
+   ]
+  ]
+ },
+ "CLANCY": {
+  "gadgets": [
+   [
+    23000774,
+    "SNAPPY SHOOTING"
+   ],
+   [
+    23000775,
+    "TACTICAL RETREAT"
+   ]
+  ],
+  "id": 16000083,
+  "starPowers": [
+   [
+    23000772,
+    "RECON"
+   ],
+   [
+    23000773,
+    "PUMPING UP"
+   ]
+  ]
+ },
+ "COLETTE": {
+  "gadgets": [
+   [
+    23000302,
+    "NA-AH!"
+   ],
+   [
+    23000457,
+    "GOTCHA!"
+   ]
+  ],
+  "id": 16000039,
+  "starPowers": [
+   [
+    23000300,
+    "PUSH IT"
+   ],
+   [
+    23000301,
+    "MASS TAX"
+   ]
+  ]
+ },
+ "COLT": {
+  "gadgets": [
+   [
+    23000273,
+    "SPEEDLOADER"
+   ],
+   [
+    23000319,
+    "SILVER BULLET"
+   ]
+  ],
+  "id": 16000001,
+  "starPowers": [
+   [
+    23000077,
+    "SLICK BOOTS"
+   ],
+   [
+    23000138,
+    "MAGNUM SPECIAL"
+   ]
+  ]
+ },
+ "CORDELIUS": {
+  "gadgets": [
+   [
+    23000587,
+    "REPLANTING"
+   ],
+   [
+    23000588,
+    "POISON MUSHROOM"
+   ]
+  ],
+  "id": 16000070,
+  "starPowers": [
+   [
+    23000585,
+    "COMBOSHROOMS"
+   ],
+   [
+    23000586,
+    "MUSHROOM KINGDOM"
+   ]
+  ]
+ },
+ "COSMO": {
+  "gadgets": [
+   [
+    23001444,
+    "PLANETARY PUSHBACK"
+   ],
+   [
+    23001445,
+    "TELESCOPE TRAP"
+   ]
+  ],
+  "id": 16000109,
+  "starPowers": [
+   [
+    23001442,
+    "PRECESSION"
+   ],
+   [
+    23001443,
+    "AMMO ATTRACTOR"
+   ]
+  ]
+ },
+ "CROW": {
+  "gadgets": [
+   [
+    23000243,
+    "INSTAPOISON"
+   ],
+   [
+    23000286,
+    "SLOWING TOXIN"
+   ]
+  ],
+  "id": 16000012,
+  "starPowers": [
+   [
+    23000088,
+    "EXTRA TOXIC"
+   ],
+   [
+    23000143,
+    "CARRION CROW"
+   ]
+  ]
+ },
+ "DAMIAN": {
+  "gadgets": [
+   [
+    23001247,
+    "SPIRITUAL HEALING"
+   ],
+   [
+    23001248,
+    "WALL OF SOUND"
+   ]
+  ],
+  "id": 16000104,
+  "starPowers": [
+   [
+    23001245,
+    "CROWDKILL"
+   ],
+   [
+    23001246,
+    "VULGAR DISPLAY OF PUNCH"
+   ]
+  ]
+ },
+ "DARRYL": {
+  "gadgets": [
+   [
+    23000260,
+    "RECOILING ROTATOR"
+   ],
+   [
+    23000313,
+    "TAR BARREL"
+   ]
+  ],
+  "id": 16000018,
+  "starPowers": [
+   [
+    23000094,
+    "STEEL HOOPS"
+   ],
+   [
+    23000157,
+    "ROLLING RELOAD"
+   ]
+  ]
+ },
+ "DOUG": {
+  "gadgets": [
+   [
+    23000595,
+    "DOUBLE SAUSAGE"
+   ],
+   [
+    23000596,
+    "EXTRA MUSTARD"
+   ]
+  ],
+  "id": 16000071,
+  "starPowers": [
+   [
+    23000593,
+    "FAST FOOD"
+   ],
+   [
+    23000594,
+    "SELF SERVICE"
+   ]
+  ]
+ },
+ "DRACO": {
+  "gadgets": [
+   [
+    23000736,
+    "UPPER CUT"
+   ],
+   [
+    23000737,
+    "LAST STAND"
+   ]
+  ],
+  "id": 16000080,
+  "starPowers": [
+   [
+    23000734,
+    "EXPOSE"
+   ],
+   [
+    23000735,
+    "SHREDDING"
+   ]
+  ]
+ },
+ "DYNAMIKE": {
+  "gadgets": [
+   [
+    23000258,
+    "FIDGET SPINNER"
+   ],
+   [
+    23000294,
+    "SATCHEL CHARGE"
+   ]
+  ],
+  "id": 16000009,
+  "starPowers": [
+   [
+    23000085,
+    "DYNA-JUMP"
+   ],
+   [
+    23000155,
+    "DEMOLITION"
+   ]
+  ]
+ },
+ "EDGAR": {
+  "gadgets": [
+   [
+    23000340,
+    "LET'S FLY"
+   ],
+   [
+    23000403,
+    "HARDCORE"
+   ]
+  ],
+  "id": 16000043,
+  "starPowers": [
+   [
+    23000338,
+    "HARD LANDING"
+   ],
+   [
+    23000339,
+    "FISTICUFFS"
+   ]
+  ]
+ },
+ "EL PRIMO": {
+  "gadgets": [
+   [
+    23000264,
+    "SUPLEX SUPPLEMENT"
+   ],
+   [
+    23000292,
+    "ASTEROID BELT"
+   ]
+  ],
+  "id": 16000010,
+  "starPowers": [
+   [
+    23000086,
+    "EL FUEGO"
+   ],
+   [
+    23000140,
+    "METEOR RUSH"
+   ]
+  ]
+ },
+ "EMZ": {
+  "gadgets": [
+   [
+    23000274,
+    "FRIENDZONER"
+   ],
+   [
+    23000459,
+    "ACID SPRAY"
+   ]
+  ],
+  "id": 16000030,
+  "starPowers": [
+   [
+    23000198,
+    "BAD KARMA"
+   ],
+   [
+    23000199,
+    "HYPE"
+   ]
+  ]
+ },
+ "EVE": {
+  "gadgets": [
+   [
+    23000454,
+    "GOTTA GO!"
+   ],
+   [
+    23000455,
+    "MOTHERLY LOVE"
+   ]
+  ],
+  "id": 16000056,
+  "starPowers": [
+   [
+    23000452,
+    "UNNATURAL ORDER"
+   ],
+   [
+    23000453,
+    "HAPPY SURPRISE"
+   ]
+  ]
+ },
+ "FANG": {
+  "gadgets": [
+   [
+    23000440,
+    "CORN-FU"
+   ],
+   [
+    23000464,
+    "ROUNDHOUSE KICK"
+   ]
+  ],
+  "id": 16000054,
+  "starPowers": [
+   [
+    23000438,
+    "FRESH KICKS"
+   ],
+   [
+    23000439,
+    "DIVINE SOLES"
+   ]
+  ]
+ },
+ "FINX": {
+  "gadgets": [
+   [
+    23000917,
+    "BACK TO THE FINXTURE"
+   ],
+   [
+    23000918,
+    "NO ESCAPE"
+   ]
+  ],
+  "id": 16000092,
+  "starPowers": [
+   [
+    23000915,
+    "HIEROGLYPH HALT"
+   ],
+   [
+    23000916,
+    "PRIMER"
+   ]
+  ]
+ },
+ "FRANK": {
+  "gadgets": [
+   [
+    23000261,
+    "ACTIVE NOISE CANCELING"
+   ],
+   [
+    23000351,
+    "IRRESISTIBLE ATTRACTION"
+   ]
+  ],
+  "id": 16000020,
+  "starPowers": [
+   [
+    23000104,
+    "POWER GRAB"
+   ],
+   [
+    23000153,
+    "SPONGE"
+   ]
+  ]
+ },
+ "GALE": {
+  "gadgets": [
+   [
+    23000277,
+    "SPRING EJECTOR"
+   ],
+   [
+    23000407,
+    "TWISTER"
+   ]
+  ],
+  "id": 16000035,
+  "starPowers": [
+   [
+    23000228,
+    "BLUSTERY BLOW"
+   ],
+   [
+    23000229,
+    "FREEZING SNOW"
+   ]
+  ]
+ },
+ "GENE": {
+  "gadgets": [
+   [
+    23000252,
+    "LAMP BLOWOUT"
+   ],
+   [
+    23000352,
+    "VENGEFUL SPIRITS"
+   ]
+  ],
+  "id": 16000021,
+  "starPowers": [
+   [
+    23000109,
+    "MAGIC PUFFS"
+   ],
+   [
+    23000159,
+    "SPIRIT SLAP"
+   ]
+  ]
+ },
+ "GIGI": {
+  "gadgets": [
+   [
+    23001070,
+    "LONGER STRINGS"
+   ],
+   [
+    23001071,
+    "DISAPPEARING ACT"
+   ]
+  ],
+  "id": 16000100,
+  "starPowers": [
+   [
+    23001068,
+    "PLIÉ PROTECTION"
+   ],
+   [
+    23001069,
+    "A HELPING HAND"
+   ]
+  ]
+ },
+ "GLOWY": {
+  "gadgets": [
+   [
+    23001183,
+    "SLIPPERY SAVIOR"
+   ],
+   [
+    23001184,
+    "MORE LUMENS!"
+   ]
+  ],
+  "id": 16000101,
+  "starPowers": [
+   [
+    23001181,
+    "BIOTIC ECOSYSTEM"
+   ],
+   [
+    23001182,
+    "PARASITISM"
+   ]
+  ]
+ },
+ "GRAY": {
+  "gadgets": [
+   [
+    23000537,
+    "WALKING CANE"
+   ],
+   [
+    23000538,
+    "GRAND PIANO"
+   ]
+  ],
+  "id": 16000064,
+  "starPowers": [
+   [
+    23000535,
+    "FAKE INJURY"
+   ],
+   [
+    23000536,
+    "NEW PERSPECTIVE"
+   ]
+  ]
+ },
+ "GRIFF": {
+  "gadgets": [
+   [
+    23000399,
+    "PIGGY BANK"
+   ],
+   [
+    23000487,
+    "COIN SHOWER"
+   ]
+  ],
+  "id": 16000050,
+  "starPowers": [
+   [
+    23000397,
+    "KEEP THE CHANGE"
+   ],
+   [
+    23000398,
+    "BUSINESS RESILIENCE"
+   ]
+  ]
+ },
+ "GROM": {
+  "gadgets": [
+   [
+    23000385,
+    "WATCHTOWER"
+   ],
+   [
+    23000460,
+    "RADIO CHECK"
+   ]
+  ],
+  "id": 16000048,
+  "starPowers": [
+   [
+    23000383,
+    "FOOT PATROL"
+   ],
+   [
+    23000384,
+    "X-FACTOR"
+   ]
+  ]
+ },
+ "GUS": {
+  "gadgets": [
+   [
+    23000513,
+    "KOOKY POPPER"
+   ],
+   [
+    23000514,
+    "KNOCKBACK SPIRIT"
+   ]
+  ],
+  "id": 16000061,
+  "starPowers": [
+   [
+    23000511,
+    "HEALTH BONANZA"
+   ],
+   [
+    23000512,
+    "SPIRIT ANIMAL"
+   ]
+  ]
+ },
+ "HANK": {
+  "gadgets": [
+   [
+    23000579,
+    "WATER BALLOONS"
+   ],
+   [
+    23000580,
+    "BARRICADE"
+   ]
+  ],
+  "id": 16000069,
+  "starPowers": [
+   [
+    23000577,
+    "IT'S GONNA BLOW"
+   ],
+   [
+    23000578,
+    "TAKE COVER!"
+   ]
+  ]
+ },
+ "JACKY": {
+  "gadgets": [
+   [
+    23000256,
+    "PNEUMATIC BOOSTER"
+   ],
+   [
+    23000486,
+    "REBUILD"
+   ]
+  ],
+  "id": 16000034,
+  "starPowers": [
+   [
+    23000222,
+    "COUNTER CRUSH"
+   ],
+   [
+    23000223,
+    "HARDY HARD HAT"
+   ]
+  ]
+ },
+ "JAE-YONG": {
+  "gadgets": [
+   [
+    23000931,
+    "WEEKEND WARRIOR"
+   ],
+   [
+    23000932,
+    "TIME FOR A SLOW SONG"
+   ]
+  ],
+  "id": 16000093,
+  "starPowers": [
+   [
+    23000929,
+    "THE CROWD GOES MILD"
+   ],
+   [
+    23000930,
+    "EXTRA HIGH NOTE"
+   ]
+  ]
+ },
+ "JANET": {
+  "gadgets": [
+   [
+    23000472,
+    "DROP THE BASS"
+   ],
+   [
+    23000473,
+    "BACKSTAGE PASS"
+   ]
+  ],
+  "id": 16000057,
+  "starPowers": [
+   [
+    23000470,
+    "STAGE VIEW"
+   ],
+   [
+    23000471,
+    "VOCAL WARM UP"
+   ]
+  ]
+ },
+ "JESSIE": {
+  "gadgets": [
+   [
+    23000251,
+    "SPARK PLUG"
+   ],
+   [
+    23000295,
+    "RECOIL SPRING"
+   ]
+  ],
+  "id": 16000007,
+  "starPowers": [
+   [
+    23000083,
+    "ENERGIZE"
+   ],
+   [
+    23000149,
+    "SHOCKY"
+   ]
+  ]
+ },
+ "JUJU": {
+  "gadgets": [
+   [
+    23000850,
+    "VOODOO CHILE"
+   ],
+   [
+    23000851,
+    "ELEMENTALIST"
+   ]
+  ],
+  "id": 16000087,
+  "starPowers": [
+   [
+    23000848,
+    "GUARDED GRIS-GRIS"
+   ],
+   [
+    23000849,
+    "NUMBING NEEDLES"
+   ]
+  ]
+ },
+ "KAZE": {
+  "gadgets": [
+   [
+    23000940,
+    "GRACIOUS HOST"
+   ],
+   [
+    23000941,
+    "HENSOJUTSU"
+   ]
+  ],
+  "id": 16000094,
+  "starPowers": [
+   [
+    23000938,
+    "ADVANCED TECHNIQUES"
+   ],
+   [
+    23000939,
+    "GRATUITY INCLUDED"
+   ]
+  ]
+ },
+ "KENJI": {
+  "gadgets": [
+   [
+    23000817,
+    "DASHI DASH"
+   ],
+   [
+    23000818,
+    "HOSOMAKI HEALING"
+   ]
+  ],
+  "id": 16000085,
+  "starPowers": [
+   [
+    23000815,
+    "STUDIED THE BLADE"
+   ],
+   [
+    23000816,
+    "NIGIRI NEMESIS"
+   ]
+  ]
+ },
+ "KIT": {
+  "gadgets": [
+   [
+    23000648,
+    "CARDBOARD BOX"
+   ],
+   [
+    23000649,
+    "CHEESEBURGER"
+   ]
+  ],
+  "id": 16000076,
+  "starPowers": [
+   [
+    23000646,
+    "POWER HUNGRY"
+   ],
+   [
+    23000647,
+    "OVERLY ATTACHED"
+   ]
+  ]
+ },
+ "LARRY & LAWRIE": {
+  "gadgets": [
+   [
+    23000661,
+    "ORDER: SWAP"
+   ],
+   [
+    23000662,
+    "ORDER: FALL BACK"
+   ]
+  ],
+  "id": 16000077,
+  "starPowers": [
+   [
+    23000659,
+    "PROTOCOL: PROTECT"
+   ],
+   [
+    23000660,
+    "PROTOCOL: ASSIST"
+   ]
+  ]
+ },
+ "LEON": {
+  "gadgets": [
+   [
+    23000276,
+    "CLONE PROJECTOR"
+   ],
+   [
+    23000408,
+    "LOLLIPOP DROP"
+   ]
+  ],
+  "id": 16000023,
+  "starPowers": [
+   [
+    23000119,
+    "SMOKE TRAILS"
+   ],
+   [
+    23000141,
+    "INVISIHEAL"
+   ]
+  ]
+ },
+ "LILY": {
+  "gadgets": [
+   [
+    23000754,
+    "VANISH"
+   ],
+   [
+    23000755,
+    "REPOT"
+   ]
+  ],
+  "id": 16000081,
+  "starPowers": [
+   [
+    23000752,
+    "SPIKY"
+   ],
+   [
+    23000753,
+    "VIGILANCE"
+   ]
+  ]
+ },
+ "LOLA": {
+  "gadgets": [
+   [
+    23000433,
+    "FREEZE FRAME"
+   ],
+   [
+    23000456,
+    "STUNT DOUBLE"
+   ]
+  ],
+  "id": 16000053,
+  "starPowers": [
+   [
+    23000431,
+    "IMPROVISE"
+   ],
+   [
+    23000432,
+    "SEALED WITH A KISS"
+   ]
+  ]
+ },
+ "LOU": {
+  "gadgets": [
+   [
+    23000326,
+    "ICE BLOCK"
+   ],
+   [
+    23000400,
+    "CRYO SYRUP"
+   ]
+  ],
+  "id": 16000041,
+  "starPowers": [
+   [
+    23000324,
+    "SUPERCOOL"
+   ],
+   [
+    23000325,
+    "HYPOTHERMIA"
+   ]
+  ]
+ },
+ "LUMI": {
+  "gadgets": [
+   [
+    23000907,
+    "HIT THE LIGHTS"
+   ],
+   [
+    23000908,
+    "GRIM AND FROSTBITTEN"
+   ]
+  ],
+  "id": 16000091,
+  "starPowers": [
+   [
+    23000905,
+    "42% BURNT"
+   ],
+   [
+    23000906,
+    "HALF-TIME"
+   ]
+  ]
+ },
+ "MAISIE": {
+  "gadgets": [
+   [
+    23000571,
+    "DISENGAGE!"
+   ],
+   [
+    23000572,
+    "FINISH THEM!"
+   ]
+  ],
+  "id": 16000068,
+  "starPowers": [
+   [
+    23000569,
+    "PINPOINT PRECISION"
+   ],
+   [
+    23000570,
+    "TREMORS"
+   ]
+  ]
+ },
+ "MANDY": {
+  "gadgets": [
+   [
+    23000545,
+    "CARAMELIZE"
+   ],
+   [
+    23000546,
+    "COOKIE CRUMBS"
+   ]
+  ],
+  "id": 16000065,
+  "starPowers": [
+   [
+    23000543,
+    "IN MY SIGHTS"
+   ],
+   [
+    23000544,
+    "HARD CANDY"
+   ]
+  ]
+ },
+ "MAX": {
+  "gadgets": [
+   [
+    23000254,
+    "PHASE SHIFTER"
+   ],
+   [
+    23000311,
+    "SNEAKY SNEAKERS"
+   ]
+  ],
+  "id": 16000032,
+  "starPowers": [
+   [
+    23000210,
+    "SUPER CHARGED"
+   ],
+   [
+    23000211,
+    "RUN N GUN"
+   ]
+  ]
+ },
+ "MEEPLE": {
+  "gadgets": [
+   [
+    23000877,
+    "MANSIONS OF MEEPLE"
+   ],
+   [
+    23000878,
+    "RAGEQUIT"
+   ]
+  ],
+  "id": 16000089,
+  "starPowers": [
+   [
+    23000875,
+    "DO NOT PASS GO"
+   ],
+   [
+    23000876,
+    "RULE BENDING"
+   ]
+  ]
+ },
+ "MEG": {
+  "gadgets": [
+   [
+    23000423,
+    "JOLTING VOLTS"
+   ],
+   [
+    23000489,
+    "REPURPOSE"
+   ]
+  ],
+  "id": 16000052,
+  "starPowers": [
+   [
+    23000421,
+    "FORCE FIELD"
+   ],
+   [
+    23000422,
+    "HEAVY METAL"
+   ]
+  ]
+ },
+ "MELODIE": {
+  "gadgets": [
+   [
+    23000669,
+    "PERFECT PITCH"
+   ],
+   [
+    23000670,
+    "INTERLUDE"
+   ]
+  ],
+  "id": 16000078,
+  "starPowers": [
+   [
+    23000667,
+    "FAST BEATS"
+   ],
+   [
+    23000668,
+    "EXTENDED MIX"
+   ]
+  ]
+ },
+ "MICO": {
+  "gadgets": [
+   [
+    23000639,
+    "CLIPPING SCREAM"
+   ],
+   [
+    23000640,
+    "PRESTO"
+   ]
+  ],
+  "id": 16000075,
+  "starPowers": [
+   [
+    23000637,
+    "MONKEY BUSINESS"
+   ],
+   [
+    23000638,
+    "RECORD SMASH"
+   ]
+  ]
+ },
+ "MINA": {
+  "gadgets": [
+   [
+    23001041,
+    "WINDMILL"
+   ],
+   [
+    23001042,
+    "CAPO-WHAT?"
+   ]
+  ],
+  "id": 16000097,
+  "starPowers": [
+   [
+    23001039,
+    "ZUM ZUM ZUM"
+   ],
+   [
+    23001040,
+    "BLOWN AWAY"
+   ]
+  ]
+ },
+ "MOE": {
+  "gadgets": [
+   [
+    23000806,
+    "DODGY DIGGING"
+   ],
+   [
+    23000807,
+    "RAT RACE"
+   ]
+  ],
+  "id": 16000084,
+  "starPowers": [
+   [
+    23000804,
+    "SKIPPING STONES"
+   ],
+   [
+    23000805,
+    "SPEEDING TICKET"
+   ]
+  ]
+ },
+ "MORTIS": {
+  "gadgets": [
+   [
+    23000265,
+    "COMBO SPINNER"
+   ],
+   [
+    23000290,
+    "CREATURE OF THE NIGHT"
+   ]
+  ],
+  "id": 16000011,
+  "starPowers": [
+   [
+    23000087,
+    "CREEPY HARVEST"
+   ],
+   [
+    23000154,
+    "COILED SNAKE"
+   ]
+  ]
+ },
+ "MR. P": {
+  "gadgets": [
+   [
+    23000269,
+    "SERVICE BELL"
+   ],
+   [
+    23000349,
+    "PORTER REINFORCEMENTS"
+   ]
+  ],
+  "id": 16000031,
+  "starPowers": [
+   [
+    23000204,
+    "HANDLE WITH CARE"
+   ],
+   [
+    23000205,
+    "REVOLVING DOOR"
+   ]
+  ]
+ },
+ "NAJIA": {
+  "gadgets": [
+   [
+    23001218,
+    "POISON PUDDLES"
+   ],
+   [
+    23001219,
+    "NAJIA JAR"
+   ]
+  ],
+  "id": 16000103,
+  "starPowers": [
+   [
+    23001216,
+    "POISONOUS PROTECTOR"
+   ],
+   [
+    23001217,
+    "VENOMOUS"
+   ]
+  ]
+ },
+ "NANI": {
+  "gadgets": [
+   [
+    23000278,
+    "WARPIN' TIME"
+   ],
+   [
+    23000353,
+    "RETURN TO SENDER"
+   ]
+  ],
+  "id": 16000036,
+  "starPowers": [
+   [
+    23000234,
+    "AUTOFOCUS"
+   ],
+   [
+    23000235,
+    "TEMPERED STEEL"
+   ]
+  ]
+ },
+ "NITA": {
+  "gadgets": [
+   [
+    23000249,
+    "BEAR PAWS"
+   ],
+   [
+    23000314,
+    "FAUX FUR"
+   ]
+  ],
+  "id": 16000008,
+  "starPowers": [
+   [
+    23000084,
+    "BEAR WITH ME"
+   ],
+   [
+    23000136,
+    "HYPER BEAR"
+   ]
+  ]
+ },
+ "NORI": {
+  "gadgets": [
+   [
+    23001297,
+    "SUSHI SNACK"
+   ],
+   [
+    23001298,
+    "GONNA NEED A BIGGER NET"
+   ]
+  ],
+  "id": 16000107,
+  "starPowers": [
+   [
+    23001295,
+    "BIG HAUL"
+   ],
+   [
+    23001296,
+    "HIS MOTHER'S SON"
+   ]
+  ]
+ },
+ "OLLIE": {
+  "gadgets": [
+   [
+    23000885,
+    "REGULATE"
+   ],
+   [
+    23000886,
+    "ALL EYEZ ON ME"
+   ]
+  ],
+  "id": 16000090,
+  "starPowers": [
+   [
+    23000883,
+    "KICK, PUSH"
+   ],
+   [
+    23000884,
+    "RENEGADE"
+   ]
+  ]
+ },
+ "OTIS": {
+  "gadgets": [
+   [
+    23000497,
+    "DORMANT STAR"
+   ],
+   [
+    23000498,
+    "PHAT SPLATTER"
+   ]
+  ],
+  "id": 16000059,
+  "starPowers": [
+   [
+    23000495,
+    "STENCIL GLUE"
+   ],
+   [
+    23000496,
+    "INK REFILLS"
+   ]
+  ]
+ },
+ "PAM": {
+  "gadgets": [
+   [
+    23000257,
+    "PULSE MODULATOR"
+   ],
+   [
+    23000404,
+    "SCRAPSUCKER"
+   ]
+  ],
+  "id": 16000016,
+  "starPowers": [
+   [
+    23000092,
+    "MAMA'S HUG"
+   ],
+   [
+    23000139,
+    "MAMA'S SQUEEZE"
+   ]
+  ]
+ },
+ "PEARL": {
+  "gadgets": [
+   [
+    23000603,
+    "OVERCOOKED"
+   ],
+   [
+    23000604,
+    "MADE WITH LOVE"
+   ]
+  ],
+  "id": 16000072,
+  "starPowers": [
+   [
+    23000601,
+    "HEAT RETENTION"
+   ],
+   [
+    23000602,
+    "HEAT SHIELD"
+   ]
+  ]
+ },
+ "PENNY": {
+  "gadgets": [
+   [
+    23000248,
+    "SALTY BARREL"
+   ],
+   [
+    23000287,
+    "TRUSTY SPYGLASS"
+   ]
+  ],
+  "id": 16000019,
+  "starPowers": [
+   [
+    23000099,
+    "HEAVY COFFERS"
+   ],
+   [
+    23000142,
+    "MASTER BLASTER"
+   ]
+  ]
+ },
+ "PIERCE": {
+  "gadgets": [
+   [
+    23001062,
+    "BOTTOMLESS MAGS"
+   ],
+   [
+    23001063,
+    "YOU ONLY BRAWL TWICE"
+   ]
+  ],
+  "id": 16000099,
+  "starPowers": [
+   [
+    23001060,
+    "MISSION: SWIMPOSSIBLE"
+   ],
+   [
+    23001061,
+    "SLIP 'N SNIPE"
+   ]
+  ]
+ },
+ "PIPER": {
+  "gadgets": [
+   [
+    23000268,
+    "AUTO AIMER"
+   ],
+   [
+    23000291,
+    "HOMEMADE RECIPE"
+   ]
+  ],
+  "id": 16000015,
+  "starPowers": [
+   [
+    23000091,
+    "AMBUSH"
+   ],
+   [
+    23000152,
+    "SNAPPY SNIPING"
+   ]
+  ]
+ },
+ "POCO": {
+  "gadgets": [
+   [
+    23000267,
+    "TUNING FORK"
+   ],
+   [
+    23000350,
+    "PROTECTIVE TUNES"
+   ]
+  ],
+  "id": 16000013,
+  "starPowers": [
+   [
+    23000089,
+    "DA CAPO!"
+   ],
+   [
+    23000144,
+    "SCREECHING SOLO"
+   ]
+  ]
+ },
+ "R-T": {
+  "gadgets": [
+   [
+    23000555,
+    "OUT OF LINE"
+   ],
+   [
+    23000556,
+    "HACKS!"
+   ]
+  ],
+  "id": 16000066,
+  "starPowers": [
+   [
+    23000553,
+    "QUICK MATHS"
+   ],
+   [
+    23000554,
+    "RECORDING"
+   ]
+  ]
+ },
+ "RICO": {
+  "gadgets": [
+   [
+    23000246,
+    "MULTIBALL LAUNCHER"
+   ],
+   [
+    23000409,
+    "MULTIBALL"
+   ]
+  ],
+  "id": 16000004,
+  "starPowers": [
+   [
+    23000080,
+    "SUPER BOUNCY"
+   ],
+   [
+    23000156,
+    "ROBO RETREAT"
+   ]
+  ]
+ },
+ "ROSA": {
+  "gadgets": [
+   [
+    23000242,
+    "GROW LIGHT"
+   ],
+   [
+    23000348,
+    "UNFRIENDLY BUSHES"
+   ]
+  ],
+  "id": 16000024,
+  "starPowers": [
+   [
+    23000124,
+    "PLANT LIFE"
+   ],
+   [
+    23000147,
+    "THORNY GLOVES"
+   ]
+  ]
+ },
+ "RUFFS": {
+  "gadgets": [
+   [
+    23000347,
+    "TAKE COVER"
+   ],
+   [
+    23000402,
+    "AIR SUPPORT"
+   ]
+  ],
+  "id": 16000044,
+  "starPowers": [
+   [
+    23000345,
+    "AIR SUPERIORITY"
+   ],
+   [
+    23000346,
+    "FIELD PROMOTION"
+   ]
+  ]
+ },
+ "SAM": {
+  "gadgets": [
+   [
+    23000505,
+    "MAGNETIC FIELD"
+   ],
+   [
+    23000506,
+    "PULSE REPELLENT"
+   ]
+  ],
+  "id": 16000060,
+  "starPowers": [
+   [
+    23000503,
+    "HEARTY RECOVERY"
+   ],
+   [
+    23000504,
+    "REMOTE RECHARGE"
+   ]
+  ]
+ },
+ "SANDY": {
+  "gadgets": [
+   [
+    23000270,
+    "SLEEP STIMULATOR"
+   ],
+   [
+    23000405,
+    "SWEET DREAMS"
+   ]
+  ],
+  "id": 16000028,
+  "starPowers": [
+   [
+    23000186,
+    "RUDE SANDS"
+   ],
+   [
+    23000187,
+    "HEALING WINDS"
+   ]
+  ]
+ },
+ "SHADE": {
+  "gadgets": [
+   [
+    23000834,
+    "LONGARMS"
+   ],
+   [
+    23000835,
+    "JUMP SCARE"
+   ]
+  ],
+  "id": 16000086,
+  "starPowers": [
+   [
+    23000832,
+    "SPOOKY SPEEDSTER"
+   ],
+   [
+    23000833,
+    "HARDENED HOODIE"
+   ]
+  ]
+ },
+ "SHELLY": {
+  "gadgets": [
+   [
+    23000255,
+    "FAST FORWARD"
+   ],
+   [
+    23000288,
+    "CLAY PIGEONS"
+   ]
+  ],
+  "id": 16000000,
+  "starPowers": [
+   [
+    23000076,
+    "SHELL SHOCK"
+   ],
+   [
+    23000135,
+    "BAND-AID"
+   ]
+  ]
+ },
+ "SIRIUS": {
+  "gadgets": [
+   [
+    23001191,
+    "A STARR IS BORN"
+   ],
+   [
+    23001192,
+    "MASTER OF SHADOWS"
+   ]
+  ],
+  "id": 16000102,
+  "starPowers": [
+   [
+    23001189,
+    "DUSK RUNNERS"
+   ],
+   [
+    23001190,
+    "THE DARKEST STARR"
+   ]
+  ]
+ },
+ "SPIKE": {
+  "gadgets": [
+   [
+    23000247,
+    "POPPING PINCUSHION"
+   ],
+   [
+    23000406,
+    "LIFE PLANT"
+   ]
+  ],
+  "id": 16000005,
+  "starPowers": [
+   [
+    23000081,
+    "FERTILIZE"
+   ],
+   [
+    23000151,
+    "CURVEBALL"
+   ]
+  ]
+ },
+ "SPROUT": {
+  "gadgets": [
+   [
+    23000244,
+    "GARDEN MULCHER"
+   ],
+   [
+    23000315,
+    "TRANSPLANT"
+   ]
+  ],
+  "id": 16000037,
+  "starPowers": [
+   [
+    23000240,
+    "OVERGROWTH"
+   ],
+   [
+    23000241,
+    "PHOTOSYNTHESIS"
+   ]
+  ]
+ },
+ "SQUEAK": {
+  "gadgets": [
+   [
+    23000378,
+    "WINDUP"
+   ],
+   [
+    23000462,
+    "RESIDUE"
+   ]
+  ],
+  "id": 16000047,
+  "starPowers": [
+   [
+    23000376,
+    "CHAIN REACTION"
+   ],
+   [
+    23000377,
+    "SUPER STICKY"
+   ]
+  ]
+ },
+ "STARR NOVA": {
+  "gadgets": [
+   [
+    23001255,
+    "FLOATY TIME"
+   ],
+   [
+    23001256,
+    "SHINING STARR OF FRIENDSHIP AND JUSTICE"
+   ]
+  ],
+  "id": 16000105,
+  "starPowers": [
+   [
+    23001253,
+    "POWER LEVEL: MAXIMUM"
+   ],
+   [
+    23001254,
+    "MYSTICAL STARR TECHNIQUE"
+   ]
+  ]
+ },
+ "STU": {
+  "gadgets": [
+   [
+    23000364,
+    "SPEED ZONE"
+   ],
+   [
+    23000401,
+    "BREAKTHROUGH"
+   ]
+  ],
+  "id": 16000045,
+  "starPowers": [
+   [
+    23000362,
+    "ZERO DRAG"
+   ],
+   [
+    23000363,
+    "GASO-HEAL"
+   ]
+  ]
+ },
+ "SURGE": {
+  "gadgets": [
+   [
+    23000285,
+    "POWER SURGE"
+   ],
+   [
+    23000485,
+    "POWER SHIELD"
+   ]
+  ],
+  "id": 16000038,
+  "starPowers": [
+   [
+    23000283,
+    "TO THE MAX!"
+   ],
+   [
+    23000284,
+    "SERVE ICE COLD"
+   ]
+  ]
+ },
+ "TARA": {
+  "gadgets": [
+   [
+    23000266,
+    "PSYCHIC ENHANCER"
+   ],
+   [
+    23000356,
+    "SUPPORT FROM BEYOND"
+   ]
+  ],
+  "id": 16000017,
+  "starPowers": [
+   [
+    23000093,
+    "BLACK PORTAL"
+   ],
+   [
+    23000160,
+    "HEALING SHADE"
+   ]
+  ]
+ },
+ "TICK": {
+  "gadgets": [
+   [
+    23000253,
+    "MINE MANIA"
+   ],
+   [
+    23000355,
+    "LAST HURRAH"
+   ]
+  ],
+  "id": 16000022,
+  "starPowers": [
+   [
+    23000114,
+    "WELL OILED"
+   ],
+   [
+    23000161,
+    "AUTOMA-TICK RELOAD"
+   ]
+  ]
+ },
+ "TRUNK": {
+  "gadgets": [
+   [
+    23001000,
+    "FOR THE QUEEN!"
+   ],
+   [
+    23001001,
+    "WORKER ANTS"
+   ]
+  ],
+  "id": 16000096,
+  "starPowers": [
+   [
+    23000998,
+    "NEW INSECT OVERLORDS"
+   ],
+   [
+    23000999,
+    "COLONY SCOUTS"
+   ]
+  ]
+ },
+ "VINCE": {
+  "gadgets": [
+   [
+    23001452,
+    "HOT COFFEE"
+   ],
+   [
+    23001453,
+    "METAMOTHOSIS"
+   ]
+  ],
+  "id": 16000110,
+  "starPowers": [
+   [
+    23001450,
+    "COME TO PAPA"
+   ],
+   [
+    23001451,
+    "BUG BANDAGE"
+   ]
+  ]
+ },
+ "WENDY": {
+  "gadgets": [
+   [
+    23001320,
+    "WIND-POWERED"
+   ],
+   [
+    23001321,
+    "GREEN GRENADE"
+   ]
+  ],
+  "id": 16000108,
+  "starPowers": [
+   [
+    23001318,
+    "SLOWING SHIELD"
+   ],
+   [
+    23001319,
+    "SOLAR SHIELD"
+   ]
+  ]
+ },
+ "WILLOW": {
+  "gadgets": [
+   [
+    23000563,
+    "SPELLBOUND"
+   ],
+   [
+    23000564,
+    "DIVE"
+   ]
+  ],
+  "id": 16000067,
+  "starPowers": [
+   [
+    23000561,
+    "LOVE IS BLIND"
+   ],
+   [
+    23000562,
+    "OBSESSION"
+   ]
+  ]
+ },
+ "ZIGGY": {
+  "gadgets": [
+   [
+    23001049,
+    "ELECTRIC SHUFFLE"
+   ],
+   [
+    23001050,
+    "NOW YOU SEE ME..."
+   ]
+  ],
+  "id": 16000098,
+  "starPowers": [
+   [
+    23001047,
+    "THUNDERSTRUCK"
+   ],
+   [
+    23001048,
+    "THE GREAT ZIGGINI"
+   ]
+  ]
+ }
+}
