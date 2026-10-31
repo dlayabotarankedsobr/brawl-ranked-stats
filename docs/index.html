@@ -115,13 +115,14 @@ img { display: block; }
 .pc-top { display: flex; align-items: center; gap: 8px; }
 .pc-ava { position: relative; width: 46px; height: 46px; flex: none; border-radius: var(--r-sm); border: 2px solid var(--ink); overflow: visible; }
 .pc-ava img, .pc-ava .ph { width: 100%; height: 100%; object-fit: cover; border-radius: 7px; font-size: 15px; }
-.pw { position: absolute; right: -8px; bottom: -8px; min-width: 24px; height: 24px; padding: 0 4px; border-radius: 999px;
-  display: grid; place-items: center; font-weight: 900; font-size: 13px; background: #fff; color: var(--ink); border: 2px solid var(--ink); }
-.pc.max .pw { background: var(--gold); }
+.pw { position: absolute; right: -12px; bottom: -12px; width: 30px; height: 36px; display: grid; place-items: center;
+  background: center / contain no-repeat; font-weight: 900; font-size: 13px; color: #fff; padding-top: 2px;
+  text-shadow: 0 1px 0 #0b1033, 1px 0 0 #0b1033, -1px 0 0 #0b1033, 0 -1px 0 #0b1033; }
 .pc-name { font-weight: 900; font-size: 14px; line-height: 1.15; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
 .pc-row { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; margin-top: 8px; }
-.it { width: 24px; height: 24px; display: inline-grid; place-items: center; font-size: 12px; font-weight: 900; border-radius: 6px; background: rgba(14,18,48,.45); }
-.it img { width: 24px; height: 24px; object-fit: contain; }
+.it { width: 28px; height: 28px; display: inline-grid; place-items: center; font-size: 12px; font-weight: 900; border-radius: 6px; background: rgba(14,18,48,.45); }
+.it img { width: 28px; height: 28px; object-fit: contain; filter: drop-shadow(0 1px 0 #0b1033); }
+.it.buff { background: transparent; }
 .it.off { opacity: .22; filter: grayscale(1); }
 .it.hc { color: #c77dff; font-size: 15px; }
 .it.gear { background: transparent; }
@@ -217,7 +218,7 @@ const T = {
     done: "Драфт готов", stats: "{games} игр Легенда+ · обновлено {upd}",
     open: "Открытая карта · дальних пиков {p}%", closed: "Закрытая карта · дальних пиков {p}%", mid: "Средняя карта · дальних пиков {p}%",
     ban_sugg: "Чаще всего стоит банить", nothing: "Не нашёл подходящих бойцов",
-    w_counters: "контрит {l}", w_loses: "проигрывает {l}", w_synergy: "хорошо с {l}", w_pro: "берут про-игроки",
+    ban_why_us: "Первыми пикаем мы: оставь себе {x}, баним тех, кто его контрит, и сильных ласт-пиков.", ban_why_them: "Первыми пикают они: баним самых сильных метовых, их заберут первым пиком.", plan_bans_us: "Баны, если первые пикаем мы", plan_bans_them: "Баны, если первыми пикают они", w_counters: "контрит {l}", w_threat: "осторожно: его может законтрить {l}", w_loses: "проигрывает {l}", w_synergy: "хорошо с {l}", w_pro: "берут про-игроки",
     w_meta: "часто берут и выигрывают на этой карте", w_rare: "сильный, но редкий выбор",
     c_second_tank: "второй танк", c_all_close: "вся команда ближнего боя", c_open_close: "карта открытая, ближнему бою тяжело",
     c_need_long: "нужен дальний боец", c_no_long: "в команде не будет дальнего бойца", c_closed_long: "карта закрытая, дальнему тесно",
@@ -246,6 +247,8 @@ const T = {
     g_speed: "кустов {p}% — «Скорость» для сближения через кусты",
     g_vision: "кустов {p}% — «Зрение», чтобы враг не прятался в кустах",
     g_vision_enemy: "кустов {p}% и у врага ближний бой — «Зрение» против засад",
+    g_shield_open: "открытая карта — «Щит»: дольше стоишь в перестрелке",
+    g_shield_poke: "у врага дальнобойные — «Щит» гасит их урон издалека",
     acc_title: "Мой аккаунт", acc_hint: "Введи тег — учту силу бойцов, гаджеты, пассивки и снаряжение. Бот пришлёт ссылку.",
     acc_find: "Найти", acc_forget: "Убрать", acc_open: "Профиль", acc_loading: "Ищу…", acc_notfound: "Игрок не найден. Проверь тег.", img_sent: "Картинка отправлена в чат с ботом ✅", img_wait: "Рисую…", api_down: "Сервер Brawl Stars сейчас не отвечает. Попробуй ещё раз через минуту.",
     m_trophies: "Кубки", m_best: "Рекорд кубков", m_ranked: "Ранкед сейчас", m_best_ranked: "Лучший ранкед", m_level: "Уровень",
@@ -269,7 +272,7 @@ const T = {
     done: "Draft complete", stats: "{games} Legendary+ games · updated {upd}",
     open: "Open map · {p}% long-range picks", closed: "Closed map · {p}% long-range picks", mid: "Medium map · {p}% long-range picks",
     ban_sugg: "Best bans here", nothing: "No suitable brawlers found",
-    w_counters: "counters {l}", w_loses: "loses to {l}", w_synergy: "good with {l}", w_pro: "picked by pros",
+    ban_why_us: "We pick first: keep {x} for us; ban its counters and strong last picks.", ban_why_them: "They pick first: ban the strongest meta brawlers they would first-pick.", plan_bans_us: "Bans if we pick first", plan_bans_them: "Bans if they pick first", w_counters: "counters {l}", w_threat: "careful: {l} can counter it", w_loses: "loses to {l}", w_synergy: "good with {l}", w_pro: "picked by pros",
     w_meta: "often picked and winning on this map", w_rare: "strong but rare pick",
     c_second_tank: "second tank", c_all_close: "whole team is close-range", c_open_close: "open map, hard for close-range",
     c_need_long: "team needs long range", c_no_long: "team will have no long range", c_closed_long: "closed map, cramped for long range",
@@ -298,6 +301,8 @@ const T = {
     g_speed: "{p}% bushes — Speed to close in through bushes",
     g_vision: "{p}% bushes — Vision so enemies can't hide in bushes",
     g_vision_enemy: "{p}% bushes and enemy close-range — Vision against ambushes",
+    g_shield_open: "open map — Shield lets you stay in long trades",
+    g_shield_poke: "enemy long-range — Shield absorbs their poke",
     acc_title: "My account", acc_hint: "Enter your tag — I'll account for power levels, gadgets, star powers and gears. The bot will send a link.",
     acc_find: "Find", acc_forget: "Remove", acc_open: "Profile", acc_loading: "Searching…", acc_notfound: "Player not found. Check the tag.", img_sent: "Image sent to the bot chat ✅", img_wait: "Drawing…", api_down: "Brawl Stars server is not responding. Try again in a minute.",
     m_trophies: "Trophies", m_best: "Highest trophies", m_ranked: "Ranked now", m_best_ranked: "Best ranked", m_level: "Level",
@@ -422,7 +427,12 @@ function openness(map, mode) {
   for (const k in tab) { const r = B[k] && B[k].rng; if (r) { tot += tab[k][0]; if (r === "long") lg += tab[k][0]; } }
   return tot ? lg / tot : .2;
 }
+const _bsCache = new Map();
 function brawlerScore(c, map, mode) {
+  const key = c + "|" + map + "|" + mode; if (_bsCache.has(key)) return _bsCache.get(key);
+  const r = brawlerScore0(c, map, mode); _bsCache.set(key, r); return r;
+}
+function brawlerScore0(c, map, mode) {
   const mt = S.modeB[mode] || {}; const [gm, wm] = mt[c] || [0, 0];
   if (gm < MIN_MODE_GAMES) return null;
   const mb = map ? (S.mapB[map] || {}) : {}; let [g, w] = mb[c] || [0, 0];
@@ -454,12 +464,54 @@ function composition(c, allies, open) {
   } else if (open <= CLOSED_MAP && r === "long") { pts -= 3; notes.push("c_closed_long"); }
   return [pts, notes];
 }
+// ---- Кто кого контрит по классам (общие знания об игре). Работает как «подсказка» поверх статистики пар ----
+// CLASS_VS[мой][чужой] > 0 — мой класс удобен против чужого, < 0 — неудобен.
+const CLASS_VS = {
+  artillery:  { assassin: -7, tank: -5, damage: -1, marksman: -2 },
+  marksman:   { artillery: 3, support: 2, controller: 1, assassin: -5, tank: -4 },
+  tank:       { artillery: 5, marksman: 4, support: 2, controller: -3, damage: -3 },
+  assassin:   { artillery: 7, marksman: 5, support: 3, tank: -3, controller: -3, damage: -2 },
+  controller: { tank: 3, assassin: 3, damage: 1, marksman: -1 },
+  damage:     { tank: 3, assassin: 2, artillery: 1 },
+  support:    { assassin: -1 },
+};
+// Бойцы, которые особенно тяжело даются метателям: быстро сокращают дистанцию, прыгают через стены или ломают укрытия
+const ANTI_THROWER = new Set(["mortis", "crow", "leon", "edgar", "stu", "buzz", "fang", "sam", "cordelius", "mico", "melodie",
+  "lily", "kenji", "shade", "kaze", "nori", "gigi", "alli", "starr_nova", "bull", "el_primo", "darryl", "bibi", "buster", "draco",
+  "ash", "frank", "jacky", "hank", "rosa", "colt", "brock", "shelly", "max"]);
+function classEdge(c, e) {   // насколько c (наш) удобен против e (их), в очках
+  const a = B[c] && B[c].cls, b = B[e] && B[e].cls; let v = ((CLASS_VS[a] || {})[b]) || 0;
+  if (a === "artillery" && ANTI_THROWER.has(e)) v -= 4;
+  if (b === "artillery" && ANTI_THROWER.has(c)) v += 3;
+  return v;
+}
+function vsEdge(c, e, vs) {   // итог матчапа: статистика пары (если игр хватает) + классовая подсказка
+  const dl = pairDelta(vs, c, e); const [g] = vs[c + "|" + e] || [0, 0];
+  const trust = Math.min(1, g / 400);   // чем больше игр в паре, тем меньше полагаемся на «общие правила»
+  return dl * 80 + classEdge(c, e) * (1 - 0.6 * trust);
+}
+// Угроза ответного пика: кого соперник ещё может взять (не забанен, не взят) и насколько он нас контрит
+function counterThreat(c, d, open) {
+  const left = enemyPicksLeft(d); if (!left) return [0, null];
+  const vs = S.vs[d.mode] || {}; const taken = new Set([...d.bans, ...d.ally, ...d.enemy, c]); let worst = 0, who = null;
+  for (const e in (S.modeB[d.mode] || {})) { if (taken.has(e)) continue;
+    const bs = brawlerScore(e, d.map, d.mode); if (!bs || !bs.meta) continue;
+    const hurt = -vsEdge(c, e, vs);   // > 0 — e наказывает c
+    const likely = Math.min(1, bs.pick * 6) * (0.6 + (bs.adj - .5) * 4);   // насколько вероятно, что его возьмут
+    const v = hurt * likely; if (v > worst) { worst = v; who = e; } }
+  return [-(worst * (left >= 2 ? 0.7 : 0.5)), worst >= 3 ? who : null];
+}
+function enemyPicksLeft(d) {   // сколько пиков у соперника после нашего текущего хода
+  return Math.max(0, 3 - d.enemy.length - (d._themNow || 0));
+}
 function scoreOf(c, d, bs, open) {
   const vs = S.vs[d.mode] || {}, wt = S.wt[d.mode] || {};
   let score = (bs.adj - .5) * 100 + 1.5 * Math.log1p(bs.pick * 100) + bs.pro * 30;
   const why = [], good = [], bad = [], syn = [];
   if (bs.pro >= .05) why.push(["w_pro"]);
-  for (const e of d.enemy) { const dl = pairDelta(vs, c, e); score += dl * 80; if (dl > 0) good.push(e); else if (dl < 0) bad.push(e); }
+  for (const e of d.enemy) { const ed = vsEdge(c, e, vs); score += ed; if (ed >= 2) good.push(e); else if (ed <= -2) bad.push(e); }
+  const [th, thWho] = counterThreat(c, d, open); score += th;
+  if (thWho) why.push(["w_threat", [thWho]]);
   for (const a of d.ally) { const [x, y] = [a, c].sort(); const dl = pairDelta(wt, x, y); score += dl * 50; if (dl > 0) syn.push(a); }
   const [cp, notes] = composition(c, d.ally, open); score += cp;
   const [ap, anotes] = (ONLY_MINE ? accountPenalty(c) : [0, []]); score += ap;
@@ -482,12 +534,33 @@ function ranked(d, wantMeta) {
 function recommend(d, top) { return ranked(d, true).slice(0, top || 3); }
 function niche(d) { const res = ranked(d, false); const best = recommend(d, 1);
   const bar = best.length ? best[0].score : 0; return res.slice(0, 1).filter(r => r.score > bar - 3); }
-function banCandidates(map, mode, exclude) {
-  if (!hasMap(map, mode)) return []; const out = [];
-  for (const c in (S.modeB[mode] || {})) { if (exclude.has(c)) continue; const bs = brawlerScore(c, map, mode);
-    if (bs && bs.meta) out.push([(bs.adj - .5) * 100 + 2 * Math.log1p(bs.pick * 100) + bs.pro * 20, c]); }
-  return out.sort((a, b) => b[0] - a[0]).slice(0, 5).map(x => x[1]);
+function metaPower(c, map, mode) {   // насколько боец силён и популярен на карте (для банов)
+  const bs = brawlerScore(c, map, mode); if (!bs || !bs.meta) return null;
+  return (bs.adj - .5) * 100 + 2 * Math.log1p(bs.pick * 100) + bs.pro * 20;
 }
+// Баны зависят от того, кто пикает первым:
+//  • первыми пикаем мы — оставляем себе лучшего метового бойца и баним тех, кто его контрит,
+//    а ещё тех, кто страшен последним пиком (контрит сразу многих сильных бойцов);
+//  • первыми пикают они — баним самых сильных метовых, которых они заберут первым пиком.
+function banPlan(map, mode, exclude, first) {
+  if (!hasMap(map, mode)) return { bans: [], keep: null };
+  const pool = []; for (const c in (S.modeB[mode] || {})) { if (exclude.has(c)) continue;
+    const mp = metaPower(c, map, mode); if (mp !== null) pool.push([c, mp]); }
+  pool.sort((a, b) => b[1] - a[1]);
+  if (first !== US) return { bans: pool.slice(0, 5).map(x => x[0]), keep: null };
+  const vs = S.vs[mode] || {};
+  const d0 = { map, mode, bans: [...exclude], ally: [], enemy: [] };
+  const top = recommend(d0, 1)[0]; const keep = top ? top.c : (pool[0] || [])[0];
+  const strong = pool.slice(0, 12).map(x => x[0]);
+  const out = [];
+  for (const [e, mp] of pool) { if (e === keep) continue;
+    const vsKeep = keep ? Math.max(0, vsEdge(e, keep, vs)) : 0;   // контрит нашего первого пика
+    const flex = strong.filter(x => x !== e).reduce((s, x) => s + Math.max(0, vsEdge(e, x, vs)), 0) / Math.max(1, strong.length - 1);
+    out.push([e, vsKeep * 1.6 + flex * 1.2 + mp * 0.35, vsKeep >= 2]); }
+  out.sort((a, b) => b[1] - a[1]);
+  return { bans: out.slice(0, 5).map(x => x[0]), keep, counters: new Set(out.filter(x => x[2]).map(x => x[0])) };
+}
+function banCandidates(map, mode, exclude, first) { return banPlan(map, mode, exclude, first).bans; }
 const LO_MIN = 25, LO_K = 20, LO_SHARE = 0.15;
 // Лучший вариант из точных сборок: среди тех, что берут хотя бы в 15% боёв, — с лучшим сглаженным винрейтом.
 function bestOption(tab) {
@@ -521,20 +594,39 @@ function bushShare(map, mode) {
   const ms = Object.entries(S.maps).filter(([m, v]) => v.mode === mode && S.terrain[m]).map(([m]) => S.terrain[m].bush);
   return ms.length ? ms.reduce((a, b) => a + b, 0) / ms.length : 0.15;
 }
-function gearRule(c, gears) {
-  const r = B[c] && B[c].rng; if (!r || !gears) return { gears, note: null };
-  const bush = bushShare(st.map, st.mode), pct = Math.round(bush * 100);
-  const enemyBush = st.enemy.filter(e => B[e] && (B[e].cls === "assassin" || B[e].rng === "short")).length;
-  let want = null, note = null;
-  if ((r === "short" || r === "tank") && bush >= 0.22) { want = "SPEED"; note = ["g_speed", pct]; }
-  else if ((r === "mid" || r === "long") && (bush >= 0.25 || (bush >= 0.15 && enemyBush >= 1))) {
-    want = "VISION"; note = enemyBush ? ["g_vision_enemy", pct] : ["g_vision", pct]; }
-  if (!want) return { gears, note: null };
-  if (gears.includes(want)) return { gears, note };
-  const out = gears.slice(0, 2);
-  const idx = REPLACE_ORDER.map(g => out.indexOf(g)).find(i => i >= 0);
-  if (idx === undefined) return { gears, note: null };   // оба — особые снаряжения бойца, не трогаем
-  out[idx] = want; return { gears: out, note };
+// Снаряжение: что берут игроки Легенды+ (доля прокачавших) + правила под карту и соперников.
+// Эффекты (11 сила): Скорость — +15% в кустах; Зрение — подсвечивает задетого врага на 4 с, даже в кустах;
+// Щит — 900 щита при полном здоровье; Урон — +15% урона, пока у тебя меньше половины здоровья;
+// Здоровье — быстрее восстановление; Перезарядка гаджета — гаджет на 15% чаще.
+function gearPick(c, dataGears) {
+  const r = B[c] && B[c].rng, cls = B[c] && B[c].cls; const b = S.builds[c] || {};
+  const own = b.gear || {}, n = b.n_gear || 0;
+  const bush = bushShare(st.map, st.mode), pct = Math.round(bush * 100), open = openness(st.map, st.mode);
+  const en = st.enemy.map(e => B[e] || {});
+  const enemyAmbush = en.filter(e => e.cls === "assassin" || e.rng === "short" || e.rng === "tank").length;
+  const enemyLong = en.filter(e => e.rng === "long" || e.cls === "artillery").length;
+  const close = r === "short" || r === "tank" || cls === "assassin";
+  const cand = new Set([...UNIVERSAL_GEARS, ...Object.keys(own)]);
+  const sc = {}, why = {};
+  for (const g of cand) {
+    let v = n ? (own[g] || 0) / n * 10 : 0;          // насколько часто его качают сильные игроки (0..10)
+    if ((dataGears || []).includes(g)) v += 4;       // точные сборки с этой карты/режима
+    if (!UNIVERSAL_GEARS.includes(g) && n && (own[g] || 0) / n > 0.3) v += 3;   // особое снаряжение бойца, его реально берут
+    sc[g] = v;
+  }
+  const add = (g, v, note) => { if (g in sc) { sc[g] += v; if (note && v > 0 && (!why[g] || v > why[g][0])) why[g] = [v, note]; } };
+  if (close) { add("DAMAGE", 2); add("SPEED", bush >= 0.22 ? 5 : bush >= 0.15 ? 2 : -2, ["g_speed", pct]); }
+  else {
+    add("VISION", bush >= 0.25 ? 4 : (bush >= 0.15 && enemyAmbush ? 4 : bush >= 0.15 ? 1 : -3),
+        enemyAmbush ? ["g_vision_enemy", pct] : ["g_vision", pct]);
+    add("SPEED", -3);
+    if (open >= OPEN_MAP) { add("SHIELD", 2, ["g_shield_open"]); add("HEALTH", 1); }
+  }
+  if (enemyLong >= 2) add("SHIELD", 2, ["g_shield_poke"]);
+  if (cls === "support") add("HEALTH", 1);
+  const top = Object.entries(sc).sort((x, y) => y[1] - x[1]).slice(0, 2).map(x => x[0]);
+  const note = top.map(g => why[g]).filter(Boolean).sort((x, y) => y[0] - x[0])[0];
+  return { gears: top, note: note ? note[1] : null };
 }
 
 function build(c) {
@@ -551,7 +643,7 @@ function build(c) {
   res.ids = b.ids || {};
   const cx = contextBuild(c, st.map, st.mode);   // поправка под карту/режим из точных сборок
   if (cx) { if (cx.g) res.gadget = [cx.g]; if (cx.sp) res.sp = [cx.sp]; if (cx.gear) res.gears = cx.gear.split("+"); res.where = cx.where; }
-  const gr = gearRule(c, res.gears); res.gears = gr.gears; res.gearNote = gr.note;
+  const gr = gearPick(c, cx && cx.gear ? cx.gear.split("+") : null); res.gears = gr.gears; res.gearNote = gr.note;
   return res;
 }
 
@@ -708,14 +800,16 @@ function popular(map, mode, exclude, n) {   // чаще всего берут н
 function renderFirst() {   // экран «План на карту» + выбор, кто пикает первым
   let body = "";
   if (hasMap(st.map, st.mode)) {
-    const bans = banCandidates(st.map, st.mode, new Set()).slice(0, 3);
+    const bpUs = banPlan(st.map, st.mode, new Set(), US), bpThem = banPlan(st.map, st.mode, new Set(), THEM);
+    const bans = bpUs.bans.slice(0, 3);
     const base = { map: st.map, mode: st.mode, bans, ally: [], enemy: [] };
     const firsts = recommend(base, 4);
     const enemyFirst = popular(st.map, st.mode, new Set(bans), 3).map(x => {
       const d = { ...base, enemy: [x] }; const a = recommend(d, 1)[0];
       const b = a ? recommend({ ...d, ally: [a.c] }, 1)[0] : null; return [x, a, b]; });
     body = `<div class="sub" style="margin:8px 2px 12px">${t("plan_hint")}</div>
-      <div class="sect">🚫 ${t("plan_bans")}</div><div class="minis">${bans.map(mini).join("")}</div>
+      <div class="sect">🚫 ${t("plan_bans_us")}</div><div class="minis">${bpUs.bans.slice(0, 3).map(mini).join("")}</div>
+      <div class="sect">🚫 ${t("plan_bans_them")}</div><div class="minis">${bpThem.bans.slice(0, 3).map(mini).join("")}</div>
       <div class="sect">🔵 ${t("plan_first")}</div><div class="hint" style="margin:0 2px 8px">${t("plan_first_hint")}</div>
       <div class="recs">${firsts.map((r, i) => recCard(r, i === 0, true)).join("")}</div>
       <div class="sect">🔴 ${t("plan_second")}</div>
@@ -740,21 +834,25 @@ function accHtml() {
 }
 
 // ---- Профиль: сила, гаджеты, пассивки, гиперзаряд, баффи, снаряжение ----
-function itemIcon(dir, id, owned, title) {
-  return `<span class="it ${owned ? "" : "off"}" title="${esc(title)}">${id ? `<img src="${CDN}/${dir}/regular/${id}.png" alt="" loading="lazy" onerror="this.replaceWith(document.createTextNode('${dir === "gadgets" ? "G" : "S"}'))">` : (dir === "gadgets" ? "G" : "S")}</span>`;
+const BSI = "https://raw.githubusercontent.com/lot-xq/BSInfo-CDN/HEAD";
+function itemIcon(dir, id, owned, title, buff) {   // buff — игровой значок с белой переливающейся рамкой (баффи)
+  const fb = dir === "gadgets" ? "G" : "S";
+  if (!id) return `<span class="it ${owned ? "" : "off"}" title="${esc(title)}">${fb}</span>`;
+  const normal = `${CDN}/${dir}/regular/${id}.png`;
+  const src = buff && owned ? `${BSI}/${dir === "gadgets" ? "gadgets" : "starpowers"}/buffies/${id}.png` : normal;
+  return `<span class="it ${owned ? "" : "off"}${buff && owned ? " buff" : ""}" title="${esc(title)}"><img src="${src}" alt="" loading="lazy" onerror="if(this.src!=='${normal}'){this.src='${normal}'}else{this.replaceWith(document.createTextNode('${fb}'))}"></span>`;
 }
 function profileCard(k) {
-  const a = ACC.b[k], it = S.items[k] || { gadgets: [], starPowers: [] };
-  const gad = it.gadgets.map(([id, nm]) => itemIcon("gadgets", id, a.gadgets.has(nm), thing(nm))).join("");
-  const sps = it.starPowers.map(([id, nm]) => itemIcon("star-powers", id, a.sps.has(nm), thing(nm))).join("");
+  const a = ACC.b[k], it = S.items[k] || { gadgets: [], starPowers: [] }, bf = a.buffies;
+  const gad = it.gadgets.map(([id, nm]) => itemIcon("gadgets", id, a.gadgets.has(nm), thing(nm), bf.g)).join("");
+  const sps = it.starPowers.map(([id, nm]) => itemIcon("star-powers", id, a.sps.has(nm), thing(nm), bf.s)).join("");
   const gears = (a.gearIds || []).map(id => `<span class="it gear" title="${esc(thing(S.gearById[id] || ""))}"><img src="${CDN}/gears/regular/${id}.png" alt="" loading="lazy" onerror="this.replaceWith(document.createTextNode('${esc(thing(S.gearById[id] || "?")).slice(0, 2)}'))"></span>`).join("");
-  const bf = a.buffies, nb = bf.g + bf.s + bf.h;
+  // сила — внутри капли гиперзаряда: фиолетовая (есть гиперзаряд), с белой рамкой (баффи на гиперзаряд), серая (нет)
+  const drop = a.hc ? (bf.h ? "img/hc_b.png" : "img/hc.png") : "img/hc_off.png";
   return `<div class="pc ${a.power >= 11 ? "max" : ""}">
-    <div class="pc-top"><div class="pc-ava">${imgOr(brawlerImg(k), initials(k), bname(k))}<span class="pw">${a.power}</span></div>
+    <div class="pc-top"><div class="pc-ava">${imgOr(brawlerImg(k), initials(k), bname(k))}<span class="pw" style="background-image:url(${drop})" title="${esc(t("hc"))}">${a.power}</span></div>
       <div class="pc-name">${esc(bname(k))}</div></div>
-    <div class="pc-row">${gad}${sps}<span class="it hc ${a.hc ? "" : "off"}" title="${esc(t("hc"))}">⚡</span></div>
-    <div class="pc-row bf"><b>${t("bf")}</b><span class="${bf.g ? "on" : ""}">${t("bf_g")}</span><span class="${bf.s ? "on" : ""}">${t("bf_s")}</span><span class="${bf.h ? "on" : ""}">${t("bf_h")}</span></div>
-    ${gears ? `<div class="pc-row">${gears}</div>` : ""}</div>`;
+    <div class="pc-row">${gad}${sps}${gears}</div></div>`;
 }
 function rankName(r) { const n = +r; if (!n) return "—";
   const tiers = LANG === "ru" ? ["Бронза", "Серебро", "Золото", "Алмаз", "Мифик", "Легенда", "Мастер"] : ["Bronze", "Silver", "Gold", "Diamond", "Mythic", "Legendary", "Masters"];
@@ -767,8 +865,8 @@ function metaHtml() {
   const rIcon = r => r ? `<img src="${CDN}/ranked/tiered/${58000000 + +r - 1}.png" alt="" onerror="this.remove()">` : "";
   return `<div class="meta">
     ${tile(t("m_trophies"), m.tr ? num(m.tr) : "—")}${tile(t("m_best"), m.htr ? num(m.htr) : "—")}
-    ${tile(t("m_ranked"), rankName(m.rr) + (m.elo ? " · " + m.elo : ""), rIcon(m.rr))}
-    ${tile(t("m_best_ranked"), rankName(m.hrr) + (m.helo ? " · " + m.helo : ""), rIcon(m.hrr))}
+    ${tile(t("m_ranked"), m.elo ? num(m.elo) : "—", rIcon(m.rr))}
+    ${tile(t("m_best_ranked"), m.helo ? num(m.helo) : "—", rIcon(m.hrr))}
     ${m.lvl ? tile(t("m_level"), m.lvl) : ""}
     </div>${m.tag ? `<button class="big" style="background:var(--gold);color:var(--ink);margin:4px 0 12px" data-act="img">🖼 ${t("m_img")}</button>` : ""}`;
 }
@@ -829,7 +927,7 @@ function whyText(w) {
   const names = l => l.map(bname).join(", ");
   if (w[0] === "comp") return (w[2] ? "👍 " : "⚠️ ") + t(w[1]);
   if (w[0] === "acc") return (w[1] === "acc_trial" ? "⭐ " : "🔒 ") + t(w[1], { x: w[2] });
-  if (w[0] === "w_counters" || w[0] === "w_loses" || w[0] === "w_synergy") return t(w[0], { l: names(w[1]) });
+  if (w[0] === "w_counters" || w[0] === "w_loses" || w[0] === "w_synergy" || w[0] === "w_threat") return t(w[0], { l: names(w[1]) });
   return t(w[0]);
 }
 
@@ -893,8 +991,10 @@ function renderDraft() {
   let phase = "", hint = "", recs = "";
   if (st.stage === "bans") {
     phase = `<div class="phase">${t("bans_phase")}</div>`; hint = `<div class="hint">${t("bans_hint", { n: st.bans.length })}</div>`;
-    const bc = banCandidates(st.map, st.mode, taken());
-    if (bc.length) recs = `<div class="sect">${t("ban_sugg")}</div><div class="grid" style="margin-bottom:12px">${bc.map(gridItem).join("")}</div>`;
+    const bp = banPlan(st.map, st.mode, taken(), st.first);
+    if (bp.bans.length) recs = `<div class="sect">${t("ban_sugg")}</div>
+      <div class="hint" style="margin:0 2px 8px">${st.first === US && bp.keep ? t("ban_why_us", { x: esc(bname(bp.keep)) }) : t("ban_why_them")}</div>
+      <div class="grid" style="margin-bottom:12px">${bp.bans.map(gridItem).join("")}</div>`;
   } else if (cur && cur[0] === THEM) {
     phase = `<div class="phase them">${t("enemy_turn", { n: cur[1] })}</div>`; hint = `<div class="hint">${t("enemy_hint")}</div>`;
   } else if (cur && cur[0] === US) {
