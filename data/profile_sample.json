@@ -1,0 +1,228 @@
+{
+ "brawlers": [
+  {
+   "buffies": {
+    "gadget": false,
+    "hyperCharge": false,
+    "starPower": false
+   },
+   "currentWinStreak": 12,
+   "gadgets": [
+    {
+     "id": 23000266,
+     "name": "PSYCHIC ENHANCER"
+    },
+    {
+     "id": 23000356,
+     "name": "SUPPORT FROM BEYOND"
+    }
+   ],
+   "gears": [
+    {
+     "id": 62000002,
+     "level": 3,
+     "name": "DAMAGE"
+    },
+    {
+     "id": 62000003,
+     "level": 3,
+     "name": "VISION"
+    },
+    {
+     "id": 62000000,
+     "level": 3,
+     "name": "SPEED"
+    },
+    {
+     "id": 62000004,
+     "level": 3,
+     "name": "SHIELD"
+    }
+   ],
+   "highestTrophies": 673,
+   "hyperCharges": [
+    {
+     "id": 23000824,
+     "name": "SUPERMASSIVE"
+    }
+   ],
+   "id": 16000017,
+   "maxWinStreak": 19,
+   "name": "TARA",
+   "power": 11,
+   "prestigeLevel": 0,
+   "rank": 3,
+   "skin": {
+    "id": 29000282,
+    "name": "MISFORTUNE TARA"
+   },
+   "starPowers": [
+    {
+     "id": 23000093,
+     "name": "BLACK PORTAL"
+    },
+    {
+     "id": 23000160,
+     "name": "HEALING SHADE"
+    }
+   ],
+   "trophies": 673
+  },
+  {
+   "buffies": {
+    "gadget": false,
+    "hyperCharge": false,
+    "starPower": false
+   },
+   "currentWinStreak": 5,
+   "gadgets": [
+    {
+     "id": 23000931,
+     "name": "WEEKEND WARRIOR"
+    },
+    {
+     "id": 23000932,
+     "name": "TIME FOR A SLOW SONG"
+    }
+   ],
+   "gears": [
+    {
+     "id": 62000002,
+     "level": 3,
+     "name": "DAMAGE"
+    },
+    {
+     "id": 62000003,
+     "level": 3,
+     "name": "VISION"
+    },
+    {
+     "id": 62000004,
+     "level": 3,
+     "name": "SHIELD"
+    }
+   ],
+   "highestTrophies": 618,
+   "hyperCharges": [
+    {
+     "id": 23001054,
+     "name": "CROWD-PLEASER"
+    }
+   ],
+   "id": 16000093,
+   "maxWinStreak": 22,
+   "name": "JAE-YONG",
+   "power": 11,
+   "prestigeLevel": 0,
+   "rank": 3,
+   "skin": {
+    "id": 29001155,
+    "name": "JAE-YONG"
+   },
+   "starPowers": [
+    {
+     "id": 23000929,
+     "name": "THE CROWD GOES MILD"
+    },
+    {
+     "id": 23000930,
+     "name": "EXTRA HIGH NOTE"
+    }
+   ],
+   "trophies": 618
+  },
+  {
+   "buffies": {
+    "gadget": false,
+    "hyperCharge": false,
+    "starPower": false
+   },
+   "currentWinStreak": 22,
+   "gadgets": [
+    {
+     "id": 23000262,
+     "name": "HEAT EJECTOR"
+    },
+    {
+     "id": 23000317,
+     "name": "FLYING HOOK"
+    }
+   ],
+   "gears": [
+    {
+     "id": 62000002,
+     "level": 3,
+     "name": "DAMAGE"
+    },
+    {
+     "id": 62000003,
+     "level": 3,
+     "name": "VISION"
+    },
+    {
+     "id": 62000004,
+     "level": 3,
+     "name": "SHIELD"
+    }
+   ],
+   "highestTrophies": 1019,
+   "hyperCharges": [
+    {
+     "id": 23000910,
+     "name": "FLAMESPIN"
+    }
+   ],
+   "id": 16000025,
+   "maxWinStreak": 25,
+   "name": "CARL",
+   "power": 11,
+   "prestigeLevel": 1,
+   "rank": 5,
+   "skin": {
+    "id": 29000501,
+    "name": "BIKER CARL"
+   },
+   "starPowers": [
+    {
+     "id": 23000129,
+     "name": "POWER THROW"
+    },
+    {
+     "id": 23000145,
+     "name": "PROTECTIVE PIROUETTE"
+    }
+   ],
+   "trophies": 1019
+  }
+ ],
+ "keys": [
+  "3vs3Victories",
+  "bestRoboRumbleTime",
+  "bestTimeAsBigBrawler",
+  "brawlers",
+  "club",
+  "duoVictories",
+  "expLevel",
+  "expPoints",
+  "fame",
+  "fameTierName",
+  "highestAllTimeRankedElo",
+  "highestAllTimeRankedRank",
+  "highestAllTimeRankedRankName",
+  "highestSeasonRankedElo",
+  "highestSeasonRankedRank",
+  "highestSeasonRankedRankName",
+  "highestTrophies",
+  "icon",
+  "isQualifiedFromChampionshipChallenge",
+  "name",
+  "rankedElo",
+  "rankedRank",
+  "rankedRankName",
+  "rankedSeasonId",
+  "soloVictories",
+  "tag",
+  "totalPrestigeLevel",
+  "trophies"
+ ]
+}
