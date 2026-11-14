@@ -1,0 +1,259 @@
+{
+ "brawlers": [
+  {
+   "buffies": {
+    "gadget": false,
+    "hyperCharge": false,
+    "starPower": false
+   },
+   "currentWinStreak": 3,
+   "gadgets": [
+    {
+     "id": 23000661,
+     "name": "ORDER: SWAP"
+    },
+    {
+     "id": 23000662,
+     "name": "ORDER: FALL BACK"
+    }
+   ],
+   "gears": [
+    {
+     "id": 62000002,
+     "level": 3,
+     "name": "DAMAGE"
+    },
+    {
+     "id": 62000003,
+     "level": 3,
+     "name": "VISION"
+    },
+    {
+     "id": 62000000,
+     "level": 3,
+     "name": "SPEED"
+    },
+    {
+     "id": 62000001,
+     "level": 3,
+     "name": "HEALTH"
+    },
+    {
+     "id": 62000017,
+     "level": 3,
+     "name": "GADGET COOLDOWN"
+    },
+    {
+     "id": 62000004,
+     "level": 3,
+     "name": "SHIELD"
+    }
+   ],
+   "highestTrophies": 1023,
+   "hyperCharges": [
+    {
+     "id": 23001053,
+     "name": "THE THREE-BOT PROBLEM"
+    }
+   ],
+   "id": 16000077,
+   "maxWinStreak": 8,
+   "name": "LARRY & LAWRIE",
+   "power": 11,
+   "prestigeLevel": 1,
+   "rank": 5,
+   "skin": {
+    "id": 29001499,
+    "name": "MAGIC LAMP LARRY & LAWRIE"
+   },
+   "starPowers": [
+    {
+     "id": 23000659,
+     "name": "PROTOCOL: PROTECT"
+    },
+    {
+     "id": 23000660,
+     "name": "PROTOCOL: ASSIST"
+    }
+   ],
+   "trophies": 1023
+  },
+  {
+   "buffies": {
+    "gadget": false,
+    "hyperCharge": false,
+    "starPower": false
+   },
+   "currentWinStreak": 0,
+   "gadgets": [
+    {
+     "id": 23000260,
+     "name": "RECOILING ROTATOR"
+    },
+    {
+     "id": 23000313,
+     "name": "TAR BARREL"
+    }
+   ],
+   "gears": [
+    {
+     "id": 62000002,
+     "level": 3,
+     "name": "DAMAGE"
+    },
+    {
+     "id": 62000003,
+     "level": 3,
+     "name": "VISION"
+    },
+    {
+     "id": 62000000,
+     "level": 3,
+     "name": "SPEED"
+    },
+    {
+     "id": 62000001,
+     "level": 3,
+     "name": "HEALTH"
+    },
+    {
+     "id": 62000004,
+     "level": 3,
+     "name": "SHIELD"
+    }
+   ],
+   "highestTrophies": 1146,
+   "hyperCharges": [
+    {
+     "id": 23000859,
+     "name": "BARREL O' BULLETS"
+    }
+   ],
+   "id": 16000018,
+   "maxWinStreak": 5,
+   "name": "DARRYL",
+   "power": 11,
+   "prestigeLevel": 1,
+   "rank": 5,
+   "skin": {
+    "id": 29000954,
+    "name": "PLANKTON DARRYL"
+   },
+   "starPowers": [
+    {
+     "id": 23000094,
+     "name": "STEEL HOOPS"
+    },
+    {
+     "id": 23000157,
+     "name": "ROLLING RELOAD"
+    }
+   ],
+   "trophies": 1134
+  },
+  {
+   "buffies": {
+    "gadget": false,
+    "hyperCharge": false,
+    "starPower": false
+   },
+   "currentWinStreak": 3,
+   "gadgets": [
+    {
+     "id": 23000251,
+     "name": "SPARK PLUG"
+    },
+    {
+     "id": 23000295,
+     "name": "RECOIL SPRING"
+    }
+   ],
+   "gears": [
+    {
+     "id": 62000002,
+     "level": 3,
+     "name": "DAMAGE"
+    },
+    {
+     "id": 62000000,
+     "level": 3,
+     "name": "SPEED"
+    },
+    {
+     "id": 62000001,
+     "level": 3,
+     "name": "HEALTH"
+    },
+    {
+     "id": 62000004,
+     "level": 3,
+     "name": "SHIELD"
+    },
+    {
+     "id": 62000014,
+     "level": 3,
+     "name": "PET POWER"
+    }
+   ],
+   "highestTrophies": 1196,
+   "hyperCharges": [
+    {
+     "id": 23000630,
+     "name": "SCRAPPY 2.0"
+    }
+   ],
+   "id": 16000007,
+   "maxWinStreak": 12,
+   "name": "JESSIE",
+   "power": 11,
+   "prestigeLevel": 1,
+   "rank": 5,
+   "skin": {
+    "id": 29001393,
+    "name": "BUBBLEGUM MECHA JESSIE"
+   },
+   "starPowers": [
+    {
+     "id": 23000083,
+     "name": "ENERGIZE"
+    },
+    {
+     "id": 23000149,
+     "name": "SHOCKY"
+    }
+   ],
+   "trophies": 1196
+  }
+ ],
+ "keys": [
+  "3vs3Victories",
+  "bestRoboRumbleTime",
+  "bestTimeAsBigBrawler",
+  "brawlers",
+  "club",
+  "duoVictories",
+  "expLevel",
+  "expPoints",
+  "fame",
+  "fameTierName",
+  "highestAllTimeRankedElo",
+  "highestAllTimeRankedRank",
+  "highestAllTimeRankedRankName",
+  "highestSeasonRankedElo",
+  "highestSeasonRankedRank",
+  "highestSeasonRankedRankName",
+  "highestTrophies",
+  "icon",
+  "isQualifiedFromChampionshipChallenge",
+  "name",
+  "nameColor",
+  "rankedElo",
+  "rankedRank",
+  "rankedRankName",
+  "rankedSeasonId",
+  "soloVictories",
+  "tag",
+  "totalPrestigeLevel",
+  "trophies"
+ ]
+}
