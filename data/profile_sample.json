@@ -1,0 +1,224 @@
+{
+ "brawlers": [
+  {
+   "buffies": {
+    "gadget": false,
+    "hyperCharge": false,
+    "starPower": false
+   },
+   "currentWinStreak": 0,
+   "gadgets": [
+    {
+     "id": 23000352,
+     "name": "VENGEFUL SPIRITS"
+    },
+    {
+     "id": 23000252,
+     "name": "LAMP BLOWOUT"
+    }
+   ],
+   "gears": [
+    {
+     "id": 62000003,
+     "level": 3,
+     "name": "VISION"
+    },
+    {
+     "id": 62000004,
+     "level": 3,
+     "name": "SHIELD"
+    },
+    {
+     "id": 62000008,
+     "level": 3,
+     "name": "TALK TO THE HAND"
+    }
+   ],
+   "highestTrophies": 205,
+   "hyperCharges": [
+    {
+     "id": 23000690,
+     "name": "HYPER HANDS"
+    }
+   ],
+   "id": 16000021,
+   "maxWinStreak": 13,
+   "name": "GENE",
+   "power": 11,
+   "prestigeLevel": 0,
+   "rank": 1,
+   "skin": {
+    "id": 29000067,
+    "name": "GENE"
+   },
+   "starPowers": [
+    {
+     "id": 23000159,
+     "name": "SPIRIT SLAP"
+    },
+    {
+     "id": 23000109,
+     "name": "MAGIC PUFFS"
+    }
+   ],
+   "trophies": 204
+  },
+  {
+   "buffies": {
+    "gadget": true,
+    "hyperCharge": true,
+    "starPower": true
+   },
+   "currentWinStreak": 0,
+   "gadgets": [
+    {
+     "id": 23000409,
+     "name": "MULTIBALL"
+    },
+    {
+     "id": 23000246,
+     "name": "MULTIBALL LAUNCHER"
+    }
+   ],
+   "gears": [
+    {
+     "id": 62000002,
+     "level": 3,
+     "name": "DAMAGE"
+    },
+    {
+     "id": 62000003,
+     "level": 3,
+     "name": "VISION"
+    },
+    {
+     "id": 62000004,
+     "level": 3,
+     "name": "SHIELD"
+    }
+   ],
+   "highestTrophies": 418,
+   "hyperCharges": [
+    {
+     "id": 23000776,
+     "name": "TRICK SHOT KING"
+    }
+   ],
+   "id": 16000004,
+   "maxWinStreak": 22,
+   "name": "RICO",
+   "power": 11,
+   "prestigeLevel": 0,
+   "rank": 2,
+   "skin": {
+    "id": 29000009,
+    "name": "RICO"
+   },
+   "starPowers": [
+    {
+     "id": 23000156,
+     "name": "ROBO RETREAT"
+    },
+    {
+     "id": 23000080,
+     "name": "SUPER BOUNCY"
+    }
+   ],
+   "trophies": 416
+  },
+  {
+   "buffies": {
+    "gadget": false,
+    "hyperCharge": false,
+    "starPower": false
+   },
+   "currentWinStreak": 8,
+   "gadgets": [
+    {
+     "id": 23000401,
+     "name": "BREAKTHROUGH"
+    },
+    {
+     "id": 23000364,
+     "name": "SPEED ZONE"
+    }
+   ],
+   "gears": [
+    {
+     "id": 62000002,
+     "level": 3,
+     "name": "DAMAGE"
+    },
+    {
+     "id": 62000003,
+     "level": 3,
+     "name": "VISION"
+    },
+    {
+     "id": 62000004,
+     "level": 3,
+     "name": "SHIELD"
+    }
+   ],
+   "highestTrophies": 590,
+   "hyperCharges": [
+    {
+     "id": 23000858,
+     "name": "INFINITRO"
+    }
+   ],
+   "id": 16000045,
+   "maxWinStreak": 14,
+   "name": "STU",
+   "power": 11,
+   "prestigeLevel": 0,
+   "rank": 3,
+   "skin": {
+    "id": 29000417,
+    "name": "HEADLESS RIDER STU"
+   },
+   "starPowers": [
+    {
+     "id": 23000362,
+     "name": "ZERO DRAG"
+    },
+    {
+     "id": 23000363,
+     "name": "GASO-HEAL"
+    }
+   ],
+   "trophies": 590
+  }
+ ],
+ "keys": [
+  "3vs3Victories",
+  "bestRoboRumbleTime",
+  "bestTimeAsBigBrawler",
+  "brawlers",
+  "club",
+  "duoVictories",
+  "expLevel",
+  "expPoints",
+  "fame",
+  "fameTierName",
+  "highestAllTimeRankedElo",
+  "highestAllTimeRankedRank",
+  "highestAllTimeRankedRankName",
+  "highestSeasonRankedElo",
+  "highestSeasonRankedRank",
+  "highestSeasonRankedRankName",
+  "highestTrophies",
+  "icon",
+  "isQualifiedFromChampionshipChallenge",
+  "name",
+  "nameColor",
+  "rankedElo",
+  "rankedRank",
+  "rankedRankName",
+  "rankedSeasonId",
+  "soloVictories",
+  "tag",
+  "totalPrestigeLevel",
+  "trophies"
+ ]
+}
