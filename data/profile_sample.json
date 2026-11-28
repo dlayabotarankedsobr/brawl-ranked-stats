@@ -1,0 +1,249 @@
+{
+ "brawlers": [
+  {
+   "buffies": {
+    "gadget": true,
+    "hyperCharge": true,
+    "starPower": true
+   },
+   "currentWinStreak": 1,
+   "gadgets": [
+    {
+     "id": 23000265,
+     "name": "COMBO SPINNER"
+    },
+    {
+     "id": 23000290,
+     "name": "CREATURE OF THE NIGHT"
+    }
+   ],
+   "gears": [
+    {
+     "id": 62000002,
+     "level": 3,
+     "name": "DAMAGE"
+    },
+    {
+     "id": 62000000,
+     "level": 3,
+     "name": "SPEED"
+    },
+    {
+     "id": 62000017,
+     "level": 3,
+     "name": "GADGET COOLDOWN"
+    },
+    {
+     "id": 62000001,
+     "level": 3,
+     "name": "HEALTH"
+    },
+    {
+     "id": 62000004,
+     "level": 3,
+     "name": "SHIELD"
+    }
+   ],
+   "highestTrophies": 1556,
+   "hyperCharges": [
+    {
+     "id": 23000819,
+     "name": "BLOOD BOOMERANG"
+    }
+   ],
+   "id": 16000011,
+   "maxWinStreak": 33,
+   "name": "MORTIS",
+   "power": 11,
+   "prestigeLevel": 1,
+   "rank": 5,
+   "skin": {
+    "id": 29000227,
+    "name": "TRUE GOLD MORTIS"
+   },
+   "starPowers": [
+    {
+     "id": 23000087,
+     "name": "CREEPY HARVEST"
+    },
+    {
+     "id": 23000154,
+     "name": "COILED SNAKE"
+    }
+   ],
+   "trophies": 1556
+  },
+  {
+   "buffies": {
+    "gadget": false,
+    "hyperCharge": false,
+    "starPower": false
+   },
+   "currentWinStreak": 9,
+   "gadgets": [
+    {
+     "id": 23001255,
+     "name": "FLOATY TIME"
+    },
+    {
+     "id": 23001256,
+     "name": "SHINING STARR OF FRIENDSHIP AND JUSTICE"
+    }
+   ],
+   "gears": [
+    {
+     "id": 62000002,
+     "level": 3,
+     "name": "DAMAGE"
+    },
+    {
+     "id": 62000003,
+     "level": 3,
+     "name": "VISION"
+    },
+    {
+     "id": 62000000,
+     "level": 3,
+     "name": "SPEED"
+    },
+    {
+     "id": 62000004,
+     "level": 3,
+     "name": "SHIELD"
+    }
+   ],
+   "highestTrophies": 347,
+   "hyperCharges": [
+    {
+     "id": 23001284,
+     "name": "STARR NOVA: THE HYPERCHARGE"
+    }
+   ],
+   "id": 16000105,
+   "maxWinStreak": 13,
+   "name": "STARR NOVA",
+   "power": 11,
+   "prestigeLevel": 0,
+   "rank": 2,
+   "skin": {
+    "id": 29001599,
+    "name": "STARR NOVA"
+   },
+   "starPowers": [
+    {
+     "id": 23001253,
+     "name": "POWER LEVEL: MAXIMUM"
+    },
+    {
+     "id": 23001254,
+     "name": "MYSTICAL STARR TECHNIQUE"
+    }
+   ],
+   "trophies": 347
+  },
+  {
+   "buffies": {
+    "gadget": true,
+    "hyperCharge": true,
+    "starPower": true
+   },
+   "currentWinStreak": 2,
+   "gadgets": [
+    {
+     "id": 23000254,
+     "name": "PHASE SHIFTER"
+    },
+    {
+     "id": 23000311,
+     "name": "SNEAKY SNEAKERS"
+    }
+   ],
+   "gears": [
+    {
+     "id": 62000002,
+     "level": 3,
+     "name": "DAMAGE"
+    },
+    {
+     "id": 62000003,
+     "level": 3,
+     "name": "VISION"
+    },
+    {
+     "id": 62000000,
+     "level": 3,
+     "name": "SPEED"
+    },
+    {
+     "id": 62000001,
+     "level": 3,
+     "name": "HEALTH"
+    },
+    {
+     "id": 62000004,
+     "level": 3,
+     "name": "SHIELD"
+    }
+   ],
+   "highestTrophies": 1366,
+   "hyperCharges": [
+    {
+     "id": 23000689,
+     "name": "UNLIMITED ENERGY"
+    }
+   ],
+   "id": 16000032,
+   "maxWinStreak": 17,
+   "name": "MAX",
+   "power": 11,
+   "prestigeLevel": 1,
+   "rank": 5,
+   "skin": {
+    "id": 29000202,
+    "name": "STREETWEAR MAX"
+   },
+   "starPowers": [
+    {
+     "id": 23000210,
+     "name": "SUPER CHARGED"
+    },
+    {
+     "id": 23000211,
+     "name": "RUN N GUN"
+    }
+   ],
+   "trophies": 1366
+  }
+ ],
+ "keys": [
+  "3vs3Victories",
+  "bestRoboRumbleTime",
+  "bestTimeAsBigBrawler",
+  "brawlers",
+  "club",
+  "duoVictories",
+  "expLevel",
+  "expPoints",
+  "fame",
+  "fameTierName",
+  "highestAllTimeRankedElo",
+  "highestAllTimeRankedRank",
+  "highestAllTimeRankedRankName",
+  "highestSeasonRankedElo",
+  "highestSeasonRankedRank",
+  "highestSeasonRankedRankName",
+  "highestTrophies",
+  "icon",
+  "isQualifiedFromChampionshipChallenge",
+  "name",
+  "nameColor",
+  "rankedElo",
+  "rankedRank",
+  "rankedRankName",
+  "rankedSeasonId",
+  "soloVictories",
+  "tag",
+  "totalPrestigeLevel",
+  "trophies"
+ ]
+}
